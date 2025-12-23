@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Home | Fichas de Malharia{% endblock %}
+{% block content %}
+
+<h1>Catálogo de Fichas Técnicas de Malharia</h1>
+<p>Encontre fichas prontas com filtros técnicos e checkout seguro.</p>
+
+<div class="card">
+  <h2>Buscar agora</h2>
+  <form class="grid" action="/busca" method="get">
+    <label>
+      Tipo de malha
+      <select name="tipo">
+        <option value="">Todos</option>
+        {% for t in tipos %}
+          <option value="{{ t }}">{{ t }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label>
+      Categoria
+      <select name="categoria">
+        <option value="">Todas</option>
+        {% for c in categorias %}
+          <option value="{{ c }}">{{ c }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label>
+      Gramatura mínima
+      <input type="number" name="gramatura_min" placeholder="Ex: 170">
+    </label>
+
+    <label>
+      Gramatura máxima
+      <input type="number" name="gramatura_max" placeholder="Ex: 300">
+    </label>
+
+    <button class="btn" type="submit">Ir para busca</button>
+  </form>
+</div>
+
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Busca | Fichas de Malharia{% endblock %}
+{% block content %}
+
+<h1>Busca de Fichas</h1>
+
+<div class="card">
+  <form class="grid" method="get">
+    <label>
+      Tipo de malha
+      <select name="tipo">
+        <option value="">Todos</option>
+        {% for t in tipos %}
+          <option value="{{ t }}" {% if filtros.tipo == t %}selected{% endif %}>{{ t }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label>
+      Categoria
+      <select name="categoria">
+        <option value="">Todas</option>
+        {% for c in categorias %}
+          <option value="{{ c }}" {% if filtros.categoria == c %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label>
+      Composição (contém)
+      <input name="composicao" value="{{ filtros.composicao or '' }}" placeholder="Ex: elastano">
+    </label>
+
+    <label>
+      Gramatura mín.
+      <input type="number" name="gramatura_min" value="{{ filtros.gramatura_min or '' }}">
+    </label>
+
+    <label>
+      Gramatura máx.
+      <input type="number" name="gramatura_max" value="{{ filtros.gramatura_max or '' }}">
+    </label>
+
+    <button class="btn" type="submit">Filtrar</button>
+    <a class="btn ghost" href="/busca">Limpar</a>
+  </form>
+</div>
+
+<div class="results">
+  {% if fichas|length == 0 %}
+    <p>Nenhuma ficha encontrada com esses filtros.</p>
+  {% else %}
+    {% for f in fichas %}
+      <div class="card ficha">
+        <h3>{{ f.titulo }}</h3>
+        <div class="meta">
+          <span><b>Tipo:</b> {{ f.tipo_malha }}</span>
+          <span><b>Comp:</b> {{ f.composicao }}</span>
+          <span><b>Gram:</b> {{ f.gramatura }} g/m²</span>
+          <span><b>Larg:</b> {{ "%.2f"|format(f.largura) }} m</span>
+          <span><b>Categoria:</b> {{ f.categoria }}</span>
+        </div>
+        <div class="actions">
+          <div class="price">R$ {{ "%.2f"|format(f.preco) }}</div>
+          <button class="btn" disabled title="Checkout entra no próximo passo">Comprar</button>
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+</div>
+
+{% endblock %}
