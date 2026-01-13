@@ -1,122 +1,96 @@
-:root{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; background:#f6f6f8; color:#111}
+:root{
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+  background:#f6f6f8;
+  color:#111
+}
+
 .container{max-width:1100px;margin:0 auto;padding:18px}
+
 .topbar{background:#15131a;color:#fff}
 .topbar .container{display:flex;align-items:center;justify-content:space-between}
+
 .brand{color:#fff;text-decoration:none;font-weight:700}
+
 .nav a{color:#fff;text-decoration:none;margin-left:14px;opacity:.9}
 .nav a:hover{opacity:1}
+
 h1{margin:18px 0 6px}
+
 .card{background:#fff;border:1px solid #e6e6ef;border-radius:14px;padding:16px;margin:12px 0}
+
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+
 label{display:flex;flex-direction:column;font-size:14px;gap:6px}
+
 input,select{padding:10px;border:1px solid #d9d9e6;border-radius:10px}
+
 .btn{background:#3b1d6b;color:#fff;border:none;padding:10px 14px;border-radius:12px;cursor:pointer}
-.btn.ghost{background:transparent;color:#3b1d6b;border:1px solid #3b1d6b;text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+
+.btn.ghost{
+  background:transparent;
+  color:#3b1d6b;
+  border:1px solid #3b1d6b;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center
+}
+
 .results .ficha h3{margin:0 0 8px}
+
 .meta{display:flex;flex-wrap:wrap;gap:10px;font-size:14px;color:#333}
+
 .actions{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
+
 .price{font-weight:800}
+
 .footer{opacity:.7;padding:18px 0}
-@media(max-width:900px){.grid{grid-template-columns:1fr}}
-/* ===== Carrinho no menu (topbar) ===== */
 
-.nav a.nav-cart {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-  position: relative;
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr}
 }
 
-/* badge padrão */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+/* =========================================
+   Carrinho no menu + badge (sem duplicação)
+   ========================================= */
 
-  min-width: 22px;
-  height: 22px;
-  padding: 0 7px;
-
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1;
+.nav a.nav-cart{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  white-space:nowrap;
 }
 
-/* visual neutro (combina com preto/branco) */
-.badge--solid {
-  background: #111;
-  color: #fff;
+/* Badge */
+.badge{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+
+  min-width:22px;
+  height:22px;
+  padding:0 7px;
+
+  border-radius:999px;
+  font-size:12px;
+  font-weight:800;
+  line-height:1;
+
+  transition:transform .12s ease;
 }
 
-/* se seu tema for escuro na topbar, use esse */
-.badge--invert {
-  background: #fff;
-  color: #111;
+/* Combina com topbar escura */
+.badge--invert{
+  background:#fff;
+  color:#111;
 }
 
-/* (opcional) deixa o badge com leve destaque ao passar o mouse */
-.nav a.nav-cart:hover .badge {
-  transform: translateY(-1px);
+/* Alternativa neutra */
+.badge--solid{
+  background:#111;
+  color:#fff;
 }
 
-/* suaviza a animação */
-.badge {
-  transition: transform .12s ease;
-}
-
-/* ===== Layout do topo (sem inline) ===== */
-.topbar-inner {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.nav.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-/* ===== Carrinho no menu + badge ===== */
-.nav a.nav-cart {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  min-width: 22px;
-  height: 22px;
-  padding: 0 7px;
-
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 800;
-  line-height: 1;
-}
-
-.badge--solid {
-  background: #111;
-  color: #fff;
-}
-
-.badge--invert {
-  background: #fff;
-  color: #111;
-}
-
-.nav a.nav-cart:hover .badge {
-  transform: translateY(-1px);
-}
-
-.badge {
-  transition: transform .12s ease;
+.nav a.nav-cart:hover .badge{
+  transform:translateY(-1px);
 }
