@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Contato | Fichas de Malharia{% endblock %}
+{% block content %}
+
+<div class="card legal">
+  <h1>Contato</h1>
+  <p class="muted">Suporte para acesso, downloads e dúvidas sobre fichas.</p>
+
+  <div class="contact-box">
+    <div>
+      <div class="contact-label">E-mail de suporte</div>
+      <div class="contact-value">{{ support_email|default("suporte@fichasdemalharia.com.br") }}</div>
+      <div class="muted">Atendimento em horário comercial (Brasil).</div>
+    </div>
+
+    <div>
+      <div class="contact-label">Dica rápida</div>
+      <div class="muted">
+        Se o e-mail não aparecer, verifique a caixa de spam/lixo eletrônico e procure por
+        “Compra aprovada — suas fichas técnicas”.
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <h2>Envie uma mensagem</h2>
+  <form class="grid contact-grid" method="post" action="/contato">
+    <label>
+      Seu e-mail
+      <input name="email" type="email" required placeholder="ex: seuemail@empresa.com">
+    </label>
+
+    <label>
+      Assunto
+      <input name="assunto" required placeholder="Ex: Não recebi os links / Erro no download">
+    </label>
+
+    <label style="grid-column:1/-1;">
+      Mensagem
+      <input name="mensagem" required placeholder="Descreva o que aconteceu e o e-mail usado na compra.">
+    </label>
+
+    <div class="home-actions" style="grid-column:1/-1;">
+      <button class="btn" type="submit">Enviar</button>
+      <a class="btn ghost" href="/busca">Voltar para busca</a>
+    </div>
+  </form>
+
+  {% if msg_ok %}
+    <p class="success">Mensagem enviada com sucesso! Vamos responder em breve.</p>
+  {% endif %}
+</div>
+
+{% endblock %}
