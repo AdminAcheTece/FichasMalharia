@@ -372,19 +372,82 @@ def busca():
     resultados = [ficha_to_dict(f) for f in q.order_by(Ficha.id.desc()).all()]
     categorias, tipos = get_distinct_filters()
 
+    # ✅ Carrinho para o template (para mostrar "No carrinho" e contador)
+    cart_ids = cart_get()
+
     return render_template(
         "busca.html",
         fichas=resultados,
         filtros={
-            "tipo": tipo, "categoria": categoria, "composicao": comp,
-            "gramatura_min": gmin, "gramatura_max": gmax
+            "tipo": tipo,
+            "categoria": categoria,
+            "composicao": comp,
+            "gramatura_min": gmin,
+            "gramatura_max": gmax
         },
         categorias=categorias,
         tipos=tipos,
-        cart_count=len(cart_get()),
+        cart_ids=cart_ids,          # ✅ necessário para checar "f.id in cart_ids"
+        cart_count=len(cart_ids),   # ✅ badge/contador
     )
 
-# ---- Carrinho ----
+from decimal import Decimal
+from flask import session, redirect, request, url_for, render_template, abort, flash
+
+# -----------------------------
+# Cart helpers (session)
+# -----------------------------
+def cart_get():
+    """
+    Retorna sempre uma lista de IDs INT (sem duplicar).
+    Isso evita bug no template (f.id in cart_ids) e no SQL IN().
+    """
+    raw = session.get("cart", [])
+    ids = []
+    for x in raw:
+        try:
+            ids.append(int(x))
+        except (TypeError, ValueError):
+            continue
+    # remove duplicados mantendo ordem
+    seen = set()
+    normalized = []
+    for i in ids:
+        if i not in seen:
+            seen.add(i)
+            normalized.append(i)
+    session["cart"] = normalized  # normaliza e salva de volta
+    session.modified = True
+    return normalized
+
+def cart_set(items):
+    session["cart"] = [int(x) for x in items]
+    session.modified = True
+
+def cart_add(ficha_id: int):
+    items = cart_get()
+    if ficha_id not in items:
+        items.append(int(ficha_id))
+    cart_set(items)
+
+def cart_remove(ficha_id: int):
+    items = cart_get()
+    items = [i for i in items if i != int(ficha_id)]
+    cart_set(items)
+
+def cart_clear():
+    cart_set([])
+
+def cart_total_centavos():
+    ids = cart_get()
+    if not ids:
+        return 0
+    fichas = Ficha.query.filter(Ficha.id.in_(ids), Ficha.ativa.is_(True)).all()
+    return sum(f.preco_centavos for f in fichas)
+
+# -----------------------------
+# Rotas do Carrinho
+# -----------------------------
 @app.post("/cart/add/<int:ficha_id>")
 def cart_add_route(ficha_id):
     ficha = Ficha.query.get_or_404(ficha_id)
@@ -408,7 +471,9 @@ def cart_view():
 
     return render_template("cart.html", fichas=fichas_dict, total=total)
 
-# ---- Checkout (cria pedido + preferência MP) ----
+# -----------------------------
+# Checkout (cria pedido + preferência MP)
+# -----------------------------
 @app.post("/checkout")
 def checkout():
     if not mp_enabled():
@@ -419,7 +484,7 @@ def checkout():
         flash("Informe um e-mail válido para receber os links de download.", "error")
         return redirect(url_for("cart_view"))
 
-    ids = cart_get()
+    ids = cart_get()  # ✅ já vem normalizado em INT
     if not ids:
         flash("Seu carrinho está vazio.", "error")
         return redirect(url_for("busca"))
@@ -452,7 +517,6 @@ def checkout():
     pedido.mp_preference_id = pref.get("id")
     db.session.commit()
 
-    # opcional: limpa carrinho
     cart_clear()
 
     init_point = pref.get("init_point")
