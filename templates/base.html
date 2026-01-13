@@ -4,6 +4,10 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>{% block title %}Fichas de Malharia{% endblock %}</title>
+
+  <meta name="description" content="Catálogo de fichas técnicas de malharia com filtros técnicos, carrinho e checkout seguro.">
+  <meta name="theme-color" content="#15131a">
+
   <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
@@ -13,14 +17,14 @@
       <a class="brand" href="/">fichasdemalharia.com.br</a>
 
       <nav class="nav nav-right">
-        <a href="/">Home</a>
-        <a href="/busca">Buscar fichas</a>
+        <a href="/" class="{% if current_path == '/' %}active{% endif %}">Home</a>
+        <a href="/busca" class="{% if current_path.startswith('/busca') %}active{% endif %}">Buscar fichas</a>
 
-        <a href="/cart" class="nav-cart">
+        <a href="/cart" class="nav-cart {% if current_path.startswith('/cart') %}active{% endif %}">
           🛒 Carrinho
           {% set cc = cart_count|default(0) %}
           {% if cc and cc > 0 %}
-            <span class="badge badge--solid" aria-label="Itens no carrinho" title="Itens no carrinho">
+            <span class="badge badge--invert" aria-label="Itens no carrinho" title="Itens no carrinho">
               {{ cc }}
             </span>
           {% endif %}
@@ -33,50 +37,59 @@
     {% block content %}{% endblock %}
   </main>
 
-  <footer class="footer">
-    <div class="container footer-grid">
-      <div class="footer-col">
-        <div class="footer-brand">Fichas de Malharia</div>
-        <div class="footer-muted">
-          Catálogo de fichas técnicas para malharias e confecções.
+  <!-- ===== Rodapé estilo "plataforma" (AcheTece vibe) ===== -->
+  <footer class="site-footer">
+    <section class="footer-cta">
+      <div class="container footer-cta-inner">
+        <div class="footer-cta-title">
+          <h2>Fale com a gente</h2>
+          <p class="muted">Suporte por e-mail em horário comercial.</p>
         </div>
-        <div class="footer-mini trust-inline">
-          <span>🔒 Conexão segura</span>
-          <span>✅ Checkout Mercado Pago</span>
-          <span>⚡ Entrega por link</span>
-        </div>
-      </div>
 
-      <div class="footer-col">
-        <div class="footer-title">Institucional</div>
-        <a class="footer-link" href="/termos">Termos de uso</a>
-        <a class="footer-link" href="/privacidade">Política de privacidade (LGPD)</a>
-        <a class="footer-link" href="/reembolso">Política de reembolso</a>
-      </div>
+        <div class="footer-contacts">
+          <a class="footer-contact" href="mailto:{{ support_email }}">
+            <span class="ico">✉️</span>
+            <span class="txt">E-mail — {{ support_email }}</span>
+          </a>
 
-      <div class="footer-col">
-        <div class="footer-title">Suporte</div>
-        <a class="footer-link" href="/contato">Contato</a>
-        <div class="footer-muted">
-          Atendimento por e-mail em horário comercial.
-        </div>
-        <div class="footer-mini">
-          {% if support_email %}
-            <span>📩 {{ support_email }}</span>
-          {% else %}
-            <span>📩 suporte@fichasdemalharia.com.br</span>
+          {% if support_whatsapp %}
+            <a class="footer-contact" href="https://wa.me/{{ support_whatsapp|replace('+','')|replace(' ','')|replace('(','')|replace(')','')|replace('-','') }}" target="_blank" rel="noopener">
+              <span class="ico">💬</span>
+              <span class="txt">WhatsApp — {{ support_whatsapp }}</span>
+            </a>
           {% endif %}
         </div>
       </div>
-    </div>
+    </section>
 
-    <div class="container footer-bottom">
-      <div class="footer-muted">
-        © {{ 2025 }} Fichas de Malharia — Todos os direitos reservados.
-        <span class="footer-sep">•</span>
-        <span>Última atualização: {{ site_last_update|default("2026-01-13") }}</span>
+    <section class="footer-links">
+      <div class="container footer-grid">
+        <div class="footer-col">
+          <div class="footer-title">Fichas de Malharia</div>
+          <div class="footer-text muted">
+            Catálogo de fichas técnicas para malharias e confecções.
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <div class="footer-title">Institucional</div>
+          <a href="/termos">Termos de uso</a>
+          <a href="/privacidade">Política de privacidade (LGPD)</a>
+          <a href="/reembolso">Política de reembolso</a>
+        </div>
+
+        <div class="footer-col">
+          <div class="footer-title">Suporte</div>
+          <a href="/contato">Contato</a>
+          <div class="footer-small muted">Última atualização: {{ site_last_update }}</div>
+        </div>
       </div>
-    </div>
+
+      <div class="container footer-bottom">
+        <div class="muted">© {{ 2025 }} Fichas de Malharia</div>
+        <div class="muted">Checkout via Mercado Pago</div>
+      </div>
+    </section>
   </footer>
 </body>
 </html>
