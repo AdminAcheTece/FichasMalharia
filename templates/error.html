@@ -2,9 +2,41 @@
 {% block title %}Erro {{ code }} | Fichas de Malharia{% endblock %}
 {% block content %}
 
+<style>
+  .card.legal{
+    background:#fff;
+    border:1px solid #eee;
+  }
+
+  .home-actions{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+  }
+
+  /* Destaque discreto para o código de erro */
+  .error-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-top:8px;
+    padding:6px 10px;
+    border-radius:9999px;
+    background: var(--olive-50);
+    border:1px solid var(--line-olive);
+    color:#111;
+    font-weight:800;
+    font-size:13px;
+    width:fit-content;
+  }
+</style>
+
 <div class="card legal">
   <h1>Erro {{ code }}</h1>
-  <p class="muted"><b>{{ title }}</b></p>
+  <div class="error-pill">⚠️ Código: {{ code }}</div>
+
+  <p class="muted" style="margin-top:10px;"><b>{{ title }}</b></p>
   <p>{{ message }}</p>
 
   <div class="home-actions" style="margin-top:14px;">
