@@ -94,3 +94,30 @@ input,select{padding:10px;border:1px solid #d9d9e6;border-radius:10px}
 .nav a.nav-cart:hover .badge{
   transform:translateY(-1px);
 }
+
+/* Header sticky + sombra sutil */
+.topbar{
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 10px 30px rgba(0,0,0,.18);
+}
+
+/* Links do menu com “cara de app” */
+.nav a{
+  padding: 8px 10px;
+  border-radius: 10px;
+  margin-left: 10px; /* reduz um pouco pra caber melhor */
+}
+
+/* hover mais “premium” */
+.nav a:hover{
+  background: rgba(255,255,255,.08);
+  opacity: 1;
+}
+
+/* Link ativo (você aplica via classe .active no template) */
+.nav a.active{
+  background: rgba(255,255,255,.14);
+  opacity: 1;
+}
