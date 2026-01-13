@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Erro {{ code }} | Fichas de Malharia{% endblock %}
+{% block content %}
+
+<div class="card legal">
+  <h1>Erro {{ code }}</h1>
+  <p class="muted"><b>{{ title }}</b></p>
+  <p>{{ message }}</p>
+
+  <div class="home-actions" style="margin-top:14px;">
+    <a class="btn" href="/busca">Voltar para busca</a>
+    <a class="btn ghost" href="/contato">Falar com suporte</a>
+  </div>
+</div>
+
+{% endblock %}
