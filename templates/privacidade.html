@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Política de privacidade | Fichas de Malharia{% endblock %}
+{% block content %}
+
+<div class="card legal">
+  <h1>Política de privacidade (LGPD)</h1>
+  <p class="muted">Transparência sobre o uso dos seus dados.</p>
+
+  <h2>1. Dados que coletamos</h2>
+  <ul>
+    <li><b>E-mail</b> (para envio de links de download e suporte).</li>
+    <li><b>Dados de compra</b> (itens, valores, status e identificadores do pagamento).</li>
+    <li><b>Dados técnicos</b> (logs de acesso e segurança, quando aplicável).</li>
+  </ul>
+
+  <h2>2. Como usamos</h2>
+  <ul>
+    <li>Processar pagamentos, confirmar pedidos e entregar os downloads.</li>
+    <li>Atender suporte e resolver problemas de acesso.</li>
+    <li>Prevenir fraude e aumentar a segurança do serviço.</li>
+  </ul>
+
+  <h2>3. Compartilhamento</h2>
+  <p>
+    Compartilhamos apenas o necessário com provedores de pagamento e infraestrutura (ex.: checkout e entrega).
+    Não vendemos seus dados.
+  </p>
+
+  <h2>4. Retenção</h2>
+  <p>
+    Mantemos registros de compra pelo tempo necessário para suporte, conformidade e segurança.
+  </p>
+
+  <h2>5. Seus direitos</h2>
+  <p>
+    Você pode solicitar correção, acesso ou exclusão de dados quando aplicável. Solicite pelo e-mail:
+    <b>{{ support_email|default("suporte@fichasdemalharia.com.br") }}</b>.
+  </p>
+
+  <h2>6. Cookies</h2>
+  <p>
+    Podemos usar cookies/sessão para funcionamento do carrinho e experiência de navegação.
+  </p>
+</div>
+
+{% endblock %}
