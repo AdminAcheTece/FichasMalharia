@@ -181,3 +181,95 @@ input,select{padding:10px;border:1px solid #d9d9e6;border-radius:10px}
     align-items: stretch;
   }
 }
+
+/* ===== Links e utilitários ===== */
+.link{
+  color:#3b1d6b;
+  text-decoration:none;
+  font-weight:700;
+  opacity:.9;
+}
+.link:hover{ text-decoration:underline; opacity:1; }
+
+.row-between{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+
+/* ===== Produto (detalhe da ficha) ===== */
+.product-title{ margin:0 0 6px; }
+.product-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+}
+.product-buy{
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:10px;
+  min-width: 220px;
+}
+.product-price{
+  font-weight:900;
+  font-size:18px;
+}
+.product-grid{
+  display:grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap:12px;
+  margin-top:12px;
+}
+.list{ margin:8px 0 0; padding-left:18px; }
+@media(max-width:900px){
+  .product-head{ flex-direction:column; }
+  .product-buy{ align-items:stretch; min-width: unset; }
+  .product-grid{ grid-template-columns:1fr; }
+}
+
+/* ===== Minha compra ===== */
+.purchase-kpis{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:10px;
+  margin-top:12px;
+}
+.kpi{
+  border:1px solid #e6e6ef;
+  background:#fff;
+  border-radius:14px;
+  padding:12px;
+}
+.kpi-label{ font-size:13px; opacity:.75; font-weight:700; }
+.kpi-value{ font-size:15px; font-weight:900; margin-top:6px; }
+
+.purchase-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-top:10px;
+}
+.purchase-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px;
+  border:1px solid #e6e6ef;
+  border-radius:14px;
+  background:#fff;
+}
+.purchase-title{ font-weight:900; }
+.purchase-meta{ opacity:.75; font-size:14px; margin-top:4px; }
+.purchase-actions{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+@media(max-width:900px){
+  .purchase-kpis{ grid-template-columns:1fr; }
+  .purchase-item{ flex-direction:column; align-items:flex-start; }
+}
