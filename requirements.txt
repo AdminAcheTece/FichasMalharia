@@ -1,2 +1,6 @@
-Flask==3.0.3
-gunicorn==22.0.0
+Flask
+gunicorn
+requests
+flask_sqlalchemy
+boto3
+psycopg2-binary
