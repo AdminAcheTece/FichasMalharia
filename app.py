@@ -424,13 +424,17 @@ def _bootstrap():
 @app.context_processor
 def inject_globals():
     support_email = os.getenv("SUPPORT_EMAIL", "suporte@fichasdemalharia.com.br")
+    support_whatsapp = os.getenv("SUPPORT_WHATSAPP", "")  # ex: +55 (47) 99999-9999
     site_last_update = os.getenv("SITE_LAST_UPDATE", "2026-01-13")
+
     try:
         cart_count = len(cart_get())
     except Exception:
         cart_count = 0
+
     return {
         "support_email": support_email,
+        "support_whatsapp": support_whatsapp,
         "site_last_update": site_last_update,
         "cart_count": cart_count,
         "current_path": getattr(request, "path", "/"),
