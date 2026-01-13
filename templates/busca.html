@@ -3,24 +3,10 @@
 {% block content %}
 
 <div class="page-head">
-  <div class="page-head-left">
-    <h1 class="page-title">Busca de Fichas</h1>
-
-    {% if results_count is defined %}
-      <div class="muted page-subtitle">
-        {{ results_count }} resultado{% if results_count != 1 %}s{% endif %} encontrado{% if results_count != 1 %}s{% endif %}
-      </div>
-    {% endif %}
+  <div>
+    <h1>Busca de Fichas</h1>
+    <p class="sub">Use os filtros para encontrar a ficha certa e adicione ao carrinho.</p>
   </div>
-
-  <a class="btn ghost head-cart" href="/cart">
-    🛒 Carrinho
-    {% if cart_count and cart_count > 0 %}
-      <span class="badge badge--solid" aria-label="Itens no carrinho" title="Itens no carrinho">
-        {{ cart_count }}
-      </span>
-    {% endif %}
-  </a>
 </div>
 
 <div class="card" style="margin-top:14px;">
@@ -67,32 +53,33 @@
 
 <div class="results">
   {% if fichas|length == 0 %}
-    <p>Nenhuma ficha encontrada com esses filtros.</p>
+    <p style="margin-top:12px;">Nenhuma ficha encontrada com esses filtros.</p>
   {% else %}
     {% for f in fichas %}
       <div class="card ficha">
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+          <div>
+            <h3>{{ f.titulo }}</h3>
+            <div class="meta">
+              <span><b>Tipo:</b> {{ f.tipo_malha }}</span>
+              <span><b>Comp:</b> {{ f.composicao }}</span>
+              <span><b>Gram:</b> {{ f.gramatura }} g/m²</span>
+              <span><b>Larg:</b> {{ "%.2f"|format(f.largura) }} m</span>
+              <span><b>Categoria:</b> {{ f.categoria }}</span>
+            </div>
+          </div>
 
-        <div class="row-between">
-          <h3 style="margin:0;">{{ f.titulo }}</h3>
           <a class="link" href="/ficha/{{ f.id }}">Ver detalhes</a>
         </div>
 
-        <div class="meta" style="margin-top:10px;">
-          <span><b>Tipo:</b> {{ f.tipo_malha }}</span>
-          <span><b>Comp:</b> {{ f.composicao }}</span>
-          <span><b>Gram:</b> {{ f.gramatura }} g/m²</span>
-          <span><b>Larg:</b> {{ "%.2f"|format(f.largura) }} m</span>
-          <span><b>Categoria:</b> {{ f.categoria }}</span>
-        </div>
-
-        <div class="actions" style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px;">
+        <div class="actions">
           <div class="price">R$ {{ "%.2f"|format(f.preco) }}</div>
 
-          <div style="display:flex; gap:10px; align-items:center;">
+          <div class="actions-right">
             {% set no_carrinho = (cart_ids is defined and f.id in cart_ids) %}
 
             {% if no_carrinho %}
-              <span class="btn ghost" style="pointer-events:none; opacity:.85;">✅ No carrinho</span>
+              <span class="btn ghost" style="pointer-events:none; opacity:.9;">✅ No carrinho</span>
 
               <form method="post" action="/cart/remove/{{ f.id }}" style="margin:0;">
                 <button class="btn ghost" type="submit">Remover</button>
@@ -104,7 +91,6 @@
             {% endif %}
           </div>
         </div>
-
       </div>
     {% endfor %}
   {% endif %}
