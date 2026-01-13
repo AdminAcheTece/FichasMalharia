@@ -2,29 +2,18 @@
 {% block title %}Home | Fichas de Malharia{% endblock %}
 {% block content %}
 
-<section class="hero">
-  <h1>Catálogo de Fichas Técnicas de Malharia</h1>
-  <p class="muted">Encontre fichas prontas com filtros técnicos, carrinho e checkout seguro.</p>
-
-  <div class="chips">
-    <span class="chip">✅ Checkout Mercado Pago</span>
-    <span class="chip">🔒 Conexão segura (HTTPS)</span>
-    <span class="chip">⚡ Entrega por link após pagamento</span>
-    <span class="chip">📩 Suporte por e-mail</span>
+<div class="page-head">
+  <div>
+    <h1>Catálogo de Fichas Técnicas de Malharia</h1>
+    <p class="sub">Encontre fichas prontas com filtros técnicos e checkout seguro.</p>
   </div>
-</section>
+</div>
 
 <div class="card" style="margin-top:14px;">
-  <div class="row-between" style="margin-bottom:10px;">
-    <div>
-      <h2 style="margin:0 0 6px;">Buscar agora</h2>
-      <div class="muted">Defina um filtro inicial e vá direto para os resultados.</div>
-    </div>
+  <h2>Buscar agora</h2>
+  <p class="muted" style="margin-top:6px;">Defina um filtro inicial e vá direto para os resultados.</p>
 
-    <a class="btn ghost" href="/busca">Ver todas</a>
-  </div>
-
-  <form class="grid" action="/busca" method="get">
+  <form class="grid" action="/busca" method="get" style="margin-top:12px;">
     <label>
       Tipo de malha
       <select name="tipo">
@@ -55,7 +44,7 @@
       <input type="number" name="gramatura_max" placeholder="Ex: 300">
     </label>
 
-    <div class="grid-actions">
+    <div style="display:flex; gap:10px; align-items:center;">
       <button class="btn" type="submit">Ir para busca</button>
       <a class="btn ghost" href="/busca">Ver todos</a>
     </div>
