@@ -2,40 +2,110 @@
 {% block title %}Política de reembolso | Fichas de Malharia{% endblock %}
 {% block content %}
 
+<style>
+  .card.legal{
+    background:#fff;
+    border:1px solid #eee;
+  }
+
+  .card.legal h1{ margin-top:0; }
+  .card.legal h2{
+    margin-top:16px;
+    font-size:18px;
+    font-weight:900;
+    color:#111;
+  }
+
+  .card.legal ul{
+    margin:10px 0 0 18px;
+  }
+  .card.legal li{
+    margin:6px 0;
+    color:#333;
+    line-height:1.45;
+  }
+
+  .legal-section{
+    padding:10px 0;
+    border-bottom:1px solid #f0f0f0;
+  }
+  .legal-section:last-child{ border-bottom:0; }
+
+  .support-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    border-radius:9999px;
+    background: var(--olive-50);
+    border:1px solid var(--line-olive);
+    font-weight:900;
+    color:var(--olive-dark);
+    width:fit-content;
+    margin-top:8px;
+  }
+
+  .note{
+    margin-top:12px;
+    padding:12px 14px;
+    border-radius:14px;
+    background: var(--olive-50);
+    border:1px solid var(--line-olive);
+    color:#111;
+    font-weight:700;
+  }
+</style>
+
 <div class="card legal">
   <h1>Política de reembolso</h1>
   <p class="muted">Regras claras para um produto digital.</p>
 
-  <h2>1. Produto digital e entrega</h2>
-  <p>
-    As fichas são conteúdos digitais entregues por link após confirmação de pagamento.
-  </p>
+  <div class="legal-section">
+    <h2>1. Produto digital e entrega</h2>
+    <p>
+      As fichas são conteúdos digitais entregues por link após confirmação de pagamento.
+    </p>
+  </div>
 
-  <h2>2. Quando avaliamos reembolso</h2>
-  <ul>
-    <li>Problema técnico comprovado que impeça o download e não seja resolvido pelo suporte.</li>
-    <li>Compra duplicada do mesmo item no mesmo pedido (quando aplicável).</li>
-  </ul>
+  <div class="legal-section">
+    <h2>2. Quando avaliamos reembolso</h2>
+    <ul>
+      <li>Problema técnico comprovado que impeça o download e não seja resolvido pelo suporte.</li>
+      <li>Compra duplicada do mesmo item no mesmo pedido (quando aplicável).</li>
+    </ul>
+  </div>
 
-  <h2>3. Quando não se aplica</h2>
-  <ul>
-    <li>Após o download bem-sucedido do conteúdo.</li>
-    <li>Incompatibilidade de expectativa (ex.: queria outro tipo de ficha) — por isso, recomendamos revisar título e descrição antes da compra.</li>
-  </ul>
+  <div class="legal-section">
+    <h2>3. Quando não se aplica</h2>
+    <ul>
+      <li>Após o download bem-sucedido do conteúdo.</li>
+      <li>
+        Incompatibilidade de expectativa (ex.: queria outro tipo de ficha) — por isso,
+        recomendamos revisar título e descrição antes da compra.
+      </li>
+    </ul>
+  </div>
 
-  <h2>4. Como solicitar</h2>
-  <p>
-    Envie e-mail para <b>{{ support_email|default("suporte@fichasdemalharia.com.br") }}</b> com:
-  </p>
-  <ul>
-    <li>E-mail usado na compra</li>
-    <li>Data/horário aproximado</li>
-    <li>Descrição do problema</li>
-  </ul>
+  <div class="legal-section">
+    <h2>4. Como solicitar</h2>
+    <p>
+      Envie e-mail para:
+    </p>
+    <div class="support-pill">✉️ {{ support_email|default("suporte@fichasdemalharia.com.br") }}</div>
 
-  <p class="muted">
+    <p style="margin-top:10px;">
+      No e-mail, informe:
+    </p>
+    <ul>
+      <li>E-mail usado na compra</li>
+      <li>Data/horário aproximado</li>
+      <li>Descrição do problema</li>
+    </ul>
+  </div>
+
+  <div class="note">
     Nosso objetivo é resolver rapidamente e com transparência.
-  </p>
+  </div>
 </div>
 
 {% endblock %}
