@@ -445,6 +445,13 @@ def cart_total_centavos():
     fichas = Ficha.query.filter(Ficha.id.in_(ids), Ficha.ativa.is_(True)).all()
     return sum(f.preco_centavos for f in fichas)
 
+@app.context_processor
+def inject_cart_count():
+    try:
+        return {"cart_count": len(cart_get())}
+    except Exception:
+        return {"cart_count": 0}
+
 # -----------------------------
 # Rotas do Carrinho
 # -----------------------------
