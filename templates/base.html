@@ -34,7 +34,49 @@
   </main>
 
   <footer class="footer">
-    <div class="container">© {{ 2025 }} Fichas de Malharia</div>
+    <div class="container footer-grid">
+      <div class="footer-col">
+        <div class="footer-brand">Fichas de Malharia</div>
+        <div class="footer-muted">
+          Catálogo de fichas técnicas para malharias e confecções.
+        </div>
+        <div class="footer-mini trust-inline">
+          <span>🔒 Conexão segura</span>
+          <span>✅ Checkout Mercado Pago</span>
+          <span>⚡ Entrega por link</span>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-title">Institucional</div>
+        <a class="footer-link" href="/termos">Termos de uso</a>
+        <a class="footer-link" href="/privacidade">Política de privacidade (LGPD)</a>
+        <a class="footer-link" href="/reembolso">Política de reembolso</a>
+      </div>
+
+      <div class="footer-col">
+        <div class="footer-title">Suporte</div>
+        <a class="footer-link" href="/contato">Contato</a>
+        <div class="footer-muted">
+          Atendimento por e-mail em horário comercial.
+        </div>
+        <div class="footer-mini">
+          {% if support_email %}
+            <span>📩 {{ support_email }}</span>
+          {% else %}
+            <span>📩 suporte@fichasdemalharia.com.br</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <div class="footer-muted">
+        © {{ 2025 }} Fichas de Malharia — Todos os direitos reservados.
+        <span class="footer-sep">•</span>
+        <span>Última atualização: {{ site_last_update|default("2026-01-13") }}</span>
+      </div>
+    </div>
   </footer>
 </body>
 </html>
