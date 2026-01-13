@@ -5,28 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>{% block title %}Fichas de Malharia{% endblock %}</title>
 
-  <meta name="description" content="Catálogo de fichas técnicas de malharia com filtros técnicos, carrinho e checkout seguro.">
-  <meta name="theme-color" content="#15131a">
-
   <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+  <!-- Inter (mesma base do AcheTece) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
+
 <body>
   <header class="topbar">
     <div class="container topbar-inner">
       <a class="brand" href="/">fichasdemalharia.com.br</a>
 
       <nav class="nav nav-right">
-        <a href="/" class="{% if current_path == '/' %}active{% endif %}">Home</a>
-        <a href="/busca" class="{% if current_path.startswith('/busca') %}active{% endif %}">Buscar fichas</a>
+        <a href="/">Home</a>
+        <a href="/busca">Buscar fichas</a>
 
-        <a href="/cart" class="nav-cart {% if current_path.startswith('/cart') %}active{% endif %}">
+        <a href="/cart" class="nav-cart">
           🛒 Carrinho
           {% set cc = cart_count|default(0) %}
           {% if cc and cc > 0 %}
-            <span class="badge badge--invert" aria-label="Itens no carrinho" title="Itens no carrinho">
-              {{ cc }}
-            </span>
+            <span class="badge" aria-label="Itens no carrinho" title="Itens no carrinho">{{ cc }}</span>
           {% endif %}
         </a>
       </nav>
@@ -37,59 +39,62 @@
     {% block content %}{% endblock %}
   </main>
 
-  <!-- ===== Rodapé estilo "plataforma" (AcheTece vibe) ===== -->
-  <footer class="site-footer">
-    <section class="footer-cta">
-      <div class="container footer-cta-inner">
-        <div class="footer-cta-title">
-          <h2>Fale com a gente</h2>
-          <p class="muted">Suporte por e-mail em horário comercial.</p>
-        </div>
-
-        <div class="footer-contacts">
-          <a class="footer-contact" href="mailto:{{ support_email }}">
-            <span class="ico">✉️</span>
-            <span class="txt">E-mail — {{ support_email }}</span>
-          </a>
-
-          {% if support_whatsapp %}
-            <a class="footer-contact" href="https://wa.me/{{ support_whatsapp|replace('+','')|replace(' ','')|replace('(','')|replace(')','')|replace('-','') }}" target="_blank" rel="noopener">
-              <span class="ico">💬</span>
-              <span class="txt">WhatsApp — {{ support_whatsapp }}</span>
-            </a>
-          {% endif %}
-        </div>
+  <!-- Rodapé estilo AcheTece -->
+  <div class="cta-bar">
+    <div class="container cta-inner">
+      <div class="cta-title">
+        <h2>Fale com a gente</h2>
       </div>
-    </section>
 
-    <section class="footer-links">
-      <div class="container footer-grid">
-        <div class="footer-col">
+      <div class="cta-contacts">
+        <a class="cta-contact" href="mailto:suporte@fichasdemalharia.com.br">
+          <span class="ico">✉️</span>
+          <span>E-mail — suporte@fichasdemalharia.com.br</span>
+        </a>
+
+        <a class="cta-contact" href="https://wa.me/5547991120670" target="_blank" rel="noopener">
+          <span class="ico">💬</span>
+          <span>WhatsApp — +55 (47) 99112-0670</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <div class="footer-mark">FM</div>
+        <div>
           <div class="footer-title">Fichas de Malharia</div>
-          <div class="footer-text muted">
-            Catálogo de fichas técnicas para malharias e confecções.
+          <div class="footer-text">
+            Catálogo de fichas técnicas para malharias e confecções.<br>
+            Conexão segura • Checkout Mercado Pago • Entrega por link
           </div>
         </div>
-
-        <div class="footer-col">
-          <div class="footer-title">Institucional</div>
-          <a href="/termos">Termos de uso</a>
-          <a href="/privacidade">Política de privacidade (LGPD)</a>
-          <a href="/reembolso">Política de reembolso</a>
-        </div>
-
-        <div class="footer-col">
-          <div class="footer-title">Suporte</div>
-          <a href="/contato">Contato</a>
-          <div class="footer-small muted">Última atualização: {{ site_last_update }}</div>
-        </div>
       </div>
 
-      <div class="container footer-bottom">
-        <div class="muted">© {{ 2025 }} Fichas de Malharia</div>
-        <div class="muted">Checkout via Mercado Pago</div>
+      <div class="footer-col">
+        <div class="footer-col-title">Institucional</div>
+        <a href="/termos">Termos de uso</a>
+        <a href="/privacidade">Política de privacidade (LGPD)</a>
+        <a href="/reembolso">Política de reembolso</a>
       </div>
-    </section>
+
+      <div class="footer-col">
+        <div class="footer-col-title">Suporte</div>
+        <a href="/contato">Contato</a>
+        <div class="footer-small">Atendimento por e-mail em horário comercial.</div>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <div>© {{ 2025 }} Fichas de Malharia</div>
+      <div class="footer-mini">
+        <span>🔒 Conexão segura</span>
+        <span>✅ Checkout</span>
+        <span>⚡ Entrega por link</span>
+      </div>
+    </div>
   </footer>
 </body>
 </html>
