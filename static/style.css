@@ -1,402 +1,422 @@
+/* ============================================================
+   Fichas de Malharia — Identidade AcheTece (Inter + Roxo)
+   ============================================================ */
+
+/* 0) Tokens (iguais/compatíveis com AcheTece) */
 :root{
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-  background:#f6f6f8;
-  color:#111
+  --roxo: #8A00FF;
+  --roxo-hover: #A63DFF;
+
+  /* Alias para compatibilidade com padrões antigos */
+  --azul: var(--roxo);
+  --azul-hover: var(--roxo-hover);
+
+  --cinza-100: #f9f9f9;
+  --cinza-150: #f6f8fa;  /* fundo padrão AcheTece */
+  --cinza-200: #f2f2f2;
+  --cinza-300: #eaeaea;
+  --cinza-400: #ddd;
+  --cinza-500: #cfcfcf;
+  --cinza-700: #999;
+  --cinza-800: #666;
+
+  --cinza-texto: #444;
+  --preto: #000;
+  --branco: #fff;
+
+  --raio-8: 8px;
+  --raio-10: 10px;
+  --raio-12: 12px;
+  --raio-16: 16px;
+
+  --borda-card: #eee;
+  --sombra-1: 0 2px 6px rgba(0,0,0,.06);
+
+  --site-bg: var(--cinza-150);
+
+  --focus-ring: 0 0 0 4px rgba(138,0,255,.16);
 }
 
-.container{max-width:1100px;margin:0 auto;padding:18px}
+html{ color-scheme: light; }
+*{ margin:0; padding:0; box-sizing:border-box; }
+img{ max-width:100%; height:auto; display:block; }
 
-.topbar{background:#15131a;color:#fff}
-.topbar .container{display:flex;align-items:center;justify-content:space-between}
+body{
+  font-family:'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  color: var(--cinza-texto);
+  background: var(--site-bg);
+  line-height:1.4;
+}
 
-.brand{color:#fff;text-decoration:none;font-weight:700}
+/* Layout base */
+.container{
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 18px;
+}
 
-.nav a{color:#fff;text-decoration:none;margin-left:14px;opacity:.9}
-.nav a:hover{opacity:1}
+/* Headings */
+h1{
+  font-size: clamp(26px, 3.2vw, 40px);
+  font-weight: 900;
+  color: #000;
+  letter-spacing:-.02em;
+  margin: 18px 0 6px;
+}
+h2{
+  font-size: 22px;
+  font-weight: 900;
+  color:#000;
+  letter-spacing:-.02em;
+  margin: 0 0 10px;
+}
+p{ margin:10px 0; }
+.muted{ color: var(--cinza-800); }
 
-h1{margin:18px 0 6px}
-
-.card{background:#fff;border:1px solid #e6e6ef;border-radius:14px;padding:16px;margin:12px 0}
-
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-
-label{display:flex;flex-direction:column;font-size:14px;gap:6px}
-
-input,select{padding:10px;border:1px solid #d9d9e6;border-radius:10px}
-
-.btn{background:#3b1d6b;color:#fff;border:none;padding:10px 14px;border-radius:12px;cursor:pointer}
-
-.btn.ghost{
-  background:transparent;
-  color:#3b1d6b;
-  border:1px solid #3b1d6b;
-  text-decoration:none;
-  display:inline-flex;
+/* ============================================================
+   Header (limpo, sério — “cara de plataforma”)
+   ============================================================ */
+.topbar{
+  background: var(--branco);
+  border-bottom: 1px solid var(--cinza-300);
+}
+.topbar-inner{
+  display:flex;
   align-items:center;
-  justify-content:center
+  justify-content:space-between;
+  gap:16px;
+}
+.brand{
+  color:#111;
+  text-decoration:none;
+  font-weight:900;
+  letter-spacing:.2px;
+}
+.nav{
+  display:flex;
+  align-items:center;
+  gap:18px;
+}
+.nav a{
+  color:#17161a;
+  text-decoration:none;
+  font-weight:400;        /* igual ao AcheTece (sem negrito) */
+  line-height:1;
+}
+.nav a:hover{
+  color: var(--roxo);
+  text-decoration: underline;
+  text-underline-offset: 6px;
 }
 
-.results .ficha h3{margin:0 0 8px}
-
-.meta{display:flex;flex-wrap:wrap;gap:10px;font-size:14px;color:#333}
-
-.actions{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
-
-.price{font-weight:800}
-
-.footer{opacity:.7;padding:18px 0}
-
-@media(max-width:900px){
-  .grid{grid-template-columns:1fr}
-}
-
-/* =========================================
-   Carrinho no menu + badge (sem duplicação)
-   ========================================= */
-
+/* Carrinho */
 .nav a.nav-cart{
   display:inline-flex;
   align-items:center;
-  gap:8px;
-  white-space:nowrap;
+  gap:10px;
+  padding: 8px 12px;
+  border: 2px solid #d6d6d6;
+  border-radius: var(--raio-10);
+  background: #fff;
+  font-weight: 600;
 }
-
-/* Badge */
+.nav a.nav-cart:hover{
+  border-color: #cfcfcf;
+  text-decoration:none;
+}
 .badge{
   display:inline-flex;
   align-items:center;
   justify-content:center;
-
-  min-width:22px;
-  height:22px;
-  padding:0 7px;
-
-  border-radius:999px;
-  font-size:12px;
-  font-weight:800;
+  min-width: 26px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #111;
+  color:#fff;
+  font-weight: 800;
+  font-size: 12px;
   line-height:1;
-
-  transition:transform .12s ease;
 }
 
-/* Combina com topbar escura */
-.badge--invert{
+/* ============================================================
+   Cards / Form / Inputs
+   ============================================================ */
+.card{
   background:#fff;
+  border: 1px solid var(--borda-card);
+  border-radius: var(--raio-16);
+  padding: 16px;
+  margin: 12px 0;
+  box-shadow: none;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+label{
+  display:flex;
+  flex-direction:column;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 700;
   color:#111;
 }
 
-/* Alternativa neutra */
-.badge--solid{
-  background:#111;
+input, select, textarea{
+  width:100%;
+  height: 46px;
+  padding: 0 12px;
+  border: 1px solid #e6e6e9;
+  background: #f7f7f8;
+  border-radius: 12px;
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+}
+textarea{ height:auto; padding:12px; }
+
+input:focus, select:focus, textarea:focus{
+  border-color: rgba(138,0,255,.45);
+  box-shadow: var(--focus-ring);
+  background:#fff;
+}
+
+/* ============================================================
+   Botões (padrão AcheTece: pill, roxo)
+   ============================================================ */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+
+  height: 46px;
+  padding: 0 18px;
+
+  background: var(--roxo);
+  color: #fff;
+  border: 0;
+  border-radius: 999px;
+
+  font-weight: 800;
+  text-decoration:none;
+  cursor:pointer;
+
+  transition: transform .06s ease, opacity .2s ease, background .2s ease;
+}
+.btn:hover{ background: var(--roxo-hover); }
+.btn:active{ transform: scale(.99); }
+.btn:focus-visible{ outline: 0; box-shadow: var(--focus-ring); }
+
+.btn.ghost{
+  background:#fff;
+  color: var(--roxo);
+  border: 2px solid var(--roxo);
+}
+.btn.ghost:hover{
+  background: var(--roxo);
   color:#fff;
 }
 
-.nav a.nav-cart:hover .badge{
-  transform:translateY(-1px);
+/* Link estilo plataforma */
+.link{
+  color: var(--roxo);
+  text-decoration:none;
+  font-weight: 800;
 }
+.link:hover{ text-decoration: underline; }
 
-/* Header sticky + sombra sutil */
-.topbar{
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  box-shadow: 0 10px 30px rgba(0,0,0,.18);
-}
-
-/* Links do menu com “cara de app” */
-.nav a{
-  padding: 8px 10px;
-  border-radius: 10px;
-  margin-left: 10px; /* reduz um pouco pra caber melhor */
-}
-
-/* hover mais “premium” */
-.nav a:hover{
-  background: rgba(255,255,255,.08);
-  opacity: 1;
-}
-
-/* Link ativo (você aplica via classe .active no template) */
-.nav a.active{
-  background: rgba(255,255,255,.14);
-  opacity: 1;
-}
-
-/* ===== Home (hero + confiança) ===== */
-.hero{
-  margin: 8px 0 14px;
-}
-
-.subtitle{
-  margin: 6px 0 0;
-  color: #2b2b33;
-  opacity: .92;
+/* ============================================================
+   Busca — lista de fichas
+   ============================================================ */
+.results .ficha h3{
+  margin: 0 0 10px;
   font-size: 16px;
+  font-weight: 900;
+  color:#111;
 }
-
-/* selos de confiança */
-.trust-row{
+.meta{
   display:flex;
   flex-wrap:wrap;
-  gap:10px;
-  margin-top: 12px;
-}
-
-.trust-pill{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:8px 10px;
-  border-radius:999px;
-  background:#fff;
-  border:1px solid #e6e6ef;
-  font-size: 13px;
-  color:#1b1b22;
-}
-
-/* cabeçalho do card */
-.card-head h2{ margin: 0; }
-.muted{
-  margin: 6px 0 0;
-  color:#333;
-  opacity:.75;
+  gap:10px 14px;
   font-size: 14px;
+  color:#333;
 }
-
-/* ações do form */
-.home-actions{
-  display:flex;
-  gap:12px;
-  align-items:center;
-}
-
-/* melhora grid do home pra não “estourar” com os botões */
-.home-grid{
-  align-items:end;
-}
-
-@media(max-width:900px){
-  .home-actions{
-    flex-direction: column;
-    align-items: stretch;
-  }
-}
-
-/* ===== Links e utilitários ===== */
-.link{
-  color:#3b1d6b;
-  text-decoration:none;
-  font-weight:700;
-  opacity:.9;
-}
-.link:hover{ text-decoration:underline; opacity:1; }
-
-.row-between{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
-}
-
-/* ===== Produto (detalhe da ficha) ===== */
-.product-title{ margin:0 0 6px; }
-.product-head{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:16px;
-}
-.product-buy{
-  display:flex;
-  flex-direction:column;
-  align-items:flex-end;
-  gap:10px;
-  min-width: 220px;
-}
-.product-price{
-  font-weight:900;
-  font-size:18px;
-}
-.product-grid{
-  display:grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap:12px;
-  margin-top:12px;
-}
-.list{ margin:8px 0 0; padding-left:18px; }
-@media(max-width:900px){
-  .product-head{ flex-direction:column; }
-  .product-buy{ align-items:stretch; min-width: unset; }
-  .product-grid{ grid-template-columns:1fr; }
-}
-
-/* ===== Minha compra ===== */
-.purchase-kpis{
-  display:grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap:10px;
-  margin-top:12px;
-}
-.kpi{
-  border:1px solid #e6e6ef;
-  background:#fff;
-  border-radius:14px;
-  padding:12px;
-}
-.kpi-label{ font-size:13px; opacity:.75; font-weight:700; }
-.kpi-value{ font-size:15px; font-weight:900; margin-top:6px; }
-
-.purchase-list{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  margin-top:10px;
-}
-.purchase-item{
+.actions{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:12px;
-  padding:12px;
-  border:1px solid #e6e6ef;
-  border-radius:14px;
-  background:#fff;
+  margin-top: 14px;
 }
-.purchase-title{ font-weight:900; }
-.purchase-meta{ opacity:.75; font-size:14px; margin-top:4px; }
-.purchase-actions{
-  display:flex;
-  gap:10px;
-  align-items:center;
-}
-@media(max-width:900px){
-  .purchase-kpis{ grid-template-columns:1fr; }
-  .purchase-item{ flex-direction:column; align-items:flex-start; }
+.price{
+  font-weight: 900;
+  color:#111;
 }
 
+/* Cabeçalho das páginas (sem duplicar carrinho) */
 .page-head{
   display:flex;
   align-items:flex-start;
   justify-content:space-between;
   gap:12px;
+  margin-top: 16px;
 }
-.page-title{ margin:0; }
-.page-subtitle{ margin-top:6px; }
-
-.head-cart{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  white-space:nowrap;
+.page-head .sub{
+  margin-top: 6px;
+  color: var(--cinza-800);
 }
 
-.row-between{
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap:12px;
-}
-
-.link{
-  color:#3b1d6b;
-  text-decoration:none;
-  font-weight:800;
-  opacity:.9;
-  white-space:nowrap;
-}
-.link:hover{ text-decoration:underline; opacity:1; }
-
-/* ===== Utilitários ===== */
-.muted{opacity:.75}
-.active{opacity:1}
-.nav a.active{opacity:1; text-decoration:underline; text-underline-offset:6px}
-
-/* ===== Hero / Chips ===== */
-.hero{margin-top:18px}
-.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
-.chip{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:10px 12px;border-radius:999px;
-  background:#fff;border:1px solid #e6e6ef;
-  font-size:14px;font-weight:700;
-}
-
-/* ===== Grid actions (Home) ===== */
-.grid-actions{
-  grid-column: 1 / -1;
+/* Botões na linha de ações */
+.actions-right{
   display:flex;
   gap:10px;
   align-items:center;
 }
 
-/* ===== Footer estilo "AcheTece" ===== */
-.site-footer{margin-top:34px}
-.footer-cta{
-  background:#0f0f12;
+/* ============================================================
+   Rodapé igual AcheTece (faixa preta + colunas)
+   ============================================================ */
+.cta-bar{
+  background:#0f0714;
   color:#fff;
-  padding:26px 0;
+  padding: 22px 0;
+  margin-top: 34px;
 }
-.footer-cta-inner{
+.cta-inner{
   display:flex;
   align-items:flex-start;
   justify-content:space-between;
   gap:18px;
+  flex-wrap:wrap;
 }
-.footer-cta-title h2{margin:0 0 6px; font-size:34px; font-weight:900}
-.footer-contacts{
+.cta-title h2{
+  color:#fff;
+  margin:0;
+  font-size: 40px;
+  font-weight: 900;
+  letter-spacing:-.02em;
+}
+.cta-contacts{
   display:flex;
   flex-direction:column;
   gap:10px;
   min-width: 320px;
 }
-.footer-contact{
+.cta-contact{
   display:flex;
   align-items:center;
   gap:10px;
-  text-decoration:none;
   color:#fff;
-  opacity:.95;
+  text-decoration:none;
   font-weight:700;
+  opacity:.95;
 }
-.footer-contact:hover{opacity:1}
-.footer-contact .ico{width:22px; display:inline-flex; justify-content:center}
+.cta-contact:hover{ opacity: 1; }
+.cta-contact .ico{
+  width:22px;
+  display:inline-flex;
+  justify-content:center;
+}
 
-.footer-links{
+.site-footer{
   background:#fff;
-  border-top:1px solid #e6e6ef;
-  padding:26px 0 12px;
+  border-top:1px solid #e5e5e5;
+  padding: 26px 0 18px;
 }
 .footer-grid{
   display:grid;
   grid-template-columns: 1.2fr 1fr 1fr;
-  gap:18px;
+  gap: 18px;
+  align-items:start;
 }
-.footer-title{font-weight:900; margin-bottom:10px}
-.footer-text{max-width:420px}
+.footer-brand{
+  display:flex;
+  gap:12px;
+  align-items:flex-start;
+}
+.footer-mark{
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background:#111;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size: 12px;
+  letter-spacing:.4px;
+  flex:0 0 auto;
+  margin-top: 2px;
+}
+.footer-title{
+  font-size: 15px;
+  font-weight: 900;
+  color:#111;
+  margin-bottom: 8px;
+}
+.footer-text{
+  font-size: 14px;
+  color:#333;
+  line-height: 1.5;
+}
+.footer-col-title{
+  font-weight: 900;
+  color:#111;
+  margin-bottom: 10px;
+}
 .footer-col a{
   display:block;
-  color:#111;
   text-decoration:none;
-  margin:8px 0;
-  font-weight:700;
-  opacity:.9;
+  color:#222;
+  font-size: 14px;
+  font-weight: 700;
+  margin: 8px 0;
+  opacity:.95;
 }
-.footer-col a:hover{opacity:1; text-decoration:underline}
-.footer-small{margin-top:10px; font-weight:700}
+.footer-col a:hover{ color: var(--roxo); text-decoration: underline; }
+.footer-small{
+  margin-top: 10px;
+  font-size: 14px;
+  color:#444;
+}
 
 .footer-bottom{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:12px;
-  border-top:1px solid #e6e6ef;
-  padding-top:12px;
-  margin-top:16px;
+  border-top:1px solid #e5e5e5;
+  padding-top: 12px;
+  margin-top: 16px;
+  color:#444;
+  font-size: 14px;
+  font-weight: 600;
+}
+.footer-mini{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  color:#444;
 }
 
-@media(max-width:900px){
-  .footer-cta-inner{flex-direction:column}
-  .footer-contacts{min-width:unset}
-  .footer-grid{grid-template-columns:1fr}
-  .footer-bottom{flex-direction:column; align-items:flex-start}
+/* ============================================================
+   Responsivo
+   ============================================================ */
+@media (max-width: 900px){
+  .grid{ grid-template-columns: 1fr; }
+  .footer-grid{ grid-template-columns: 1fr; }
+  .cta-title h2{ font-size: 32px; }
+  .cta-contacts{ min-width: unset; }
+  .footer-bottom{ flex-direction:column; align-items:flex-start; }
+}
+
+@media (max-width: 520px){
+  .nav{ gap: 12px; }
+  .nav a.nav-cart{ padding: 8px 10px; }
 }
