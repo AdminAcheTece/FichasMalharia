@@ -2,6 +2,80 @@
 {% block title %}Contato | Fichas de Malharia{% endblock %}
 {% block content %}
 
+<style>
+  /* card “legal” sem depender do CSS antigo */
+  .card.legal{
+    background:#fff;
+    border:1px solid #eee;
+  }
+
+  .contact-box{
+    margin-top:14px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:14px;
+    padding:14px;
+    border-radius:14px;
+    background: var(--olive-50);
+    border:1px solid var(--line-olive);
+  }
+  @media (max-width:800px){
+    .contact-box{ grid-template-columns:1fr; }
+  }
+
+  .contact-label{
+    font-weight:800;
+    color:#111;
+    margin-bottom:4px;
+  }
+  .contact-value{
+    font-weight:900;
+    color: var(--olive-dark);
+  }
+
+  .divider{
+    border:0;
+    border-top:1px solid #eee;
+    margin:18px 0;
+  }
+
+  /* Inputs: textarea fake (você usa input para mensagem) */
+  .contact-grid input{
+    width:100%;
+    height:44px;
+    padding:10px 12px;
+    border:1px solid #ccc;
+    border-radius:12px;
+    background:#fff;
+    color:#111;
+  }
+
+  /* Mensagem "Mensagem" mais alta (sem trocar para textarea, mantém input) */
+  .contact-grid input[name="mensagem"]{
+    height:56px;
+  }
+
+  /* área de ações */
+  .home-actions{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    flex-wrap:wrap;
+    margin-top:4px;
+  }
+
+  /* sucesso */
+  .success{
+    margin-top:14px;
+    padding:12px 14px;
+    border-radius:14px;
+    background: var(--olive-50);
+    border:1px solid var(--line-olive);
+    color:#111;
+    font-weight:700;
+  }
+</style>
+
 <div class="card legal">
   <h1>Contato</h1>
   <p class="muted">Suporte para acesso, downloads e dúvidas sobre fichas.</p>
