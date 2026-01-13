@@ -22,7 +22,6 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-change-me")
 
 # ✅ DB (Render Postgres)
-# Render às vezes fornece DATABASE_URL como "postgres://"
 db_url = os.getenv("DATABASE_URL", "sqlite:///local.db")
 if db_url.startswith("postgres://"):
     db_url = db_url.replace("postgres://", "postgresql://", 1)
@@ -88,8 +87,22 @@ class DownloadToken(db.Model):
     downloads = db.Column(db.Integer, default=0)
     max_downloads = db.Column(db.Integer, default=5)
 
+
+class PedidoAccessToken(db.Model):
+    """
+    ✅ Token único para a página "Minha compra"
+    """
+    __tablename__ = "pedido_access_tokens"
+    id = db.Column(db.Integer, primary_key=True)
+    token = db.Column(db.String(140), unique=True, nullable=False, index=True)
+
+    pedido_id = db.Column(db.Integer, db.ForeignKey("pedidos.id"), nullable=False, index=True)
+
+    expira_em = db.Column(db.DateTime, nullable=False)
+    criado_em = db.Column(db.DateTime, default=datetime.utcnow)
+
 # -----------------------------
-# Helpers (seed + filtros)
+# Helpers
 # -----------------------------
 FICHAS_MOCK = [
     {
@@ -128,7 +141,6 @@ def preco_to_centavos(preco_float: float) -> int:
     return int(Decimal(str(preco_float)) * 100)
 
 def ensure_db():
-    """Cria tabelas e faz seed das fichas se estiver vazio."""
     db.create_all()
     if Ficha.query.count() == 0:
         for f in FICHAS_MOCK:
@@ -171,10 +183,24 @@ def ficha_to_dict(f: Ficha):
         "largura": float(f.largura) if f.largura is not None else None,
         "categoria": f.categoria,
         "preco": float(Decimal(f.preco_centavos) / 100),
+        "preco_centavos": f.preco_centavos,
     }
 
+def format_brl_from_centavos(v: int) -> str:
+    return f"R$ {float(Decimal(v)/100):.2f}".replace(".", ",")
+
+def mask_email(email: str) -> str:
+    try:
+        user, dom = email.split("@", 1)
+        if len(user) <= 2:
+            user_mask = user[0] + "*"
+        else:
+            user_mask = user[:2] + "*" * max(3, len(user)-2)
+        return f"{user_mask}@{dom}"
+    except Exception:
+        return email
+
 def get_base_url() -> str:
-    """BASE_URL (recomendado) ou host atual como fallback."""
     env = (os.getenv("BASE_URL") or "").strip().rstrip("/")
     if env:
         return env
@@ -187,10 +213,6 @@ def get_base_url() -> str:
 # Carrinho (session) - NORMALIZADO
 # -----------------------------
 def cart_get():
-    """
-    Retorna SEMPRE lista de IDs INT (sem duplicar).
-    Evita bug no template (f.id in cart_ids) e no SQL IN().
-    """
     raw = session.get("cart", [])
     ids = []
     for x in raw:
@@ -230,13 +252,6 @@ def cart_remove(ficha_id: int):
 def cart_clear():
     cart_set([])
 
-def cart_total_centavos():
-    ids = cart_get()
-    if not ids:
-        return 0
-    fichas = Ficha.query.filter(Ficha.id.in_(ids), Ficha.ativa.is_(True)).all()
-    return sum(f.preco_centavos for f in fichas)
-
 # -----------------------------
 # Storage (S3/R2) presigned URL
 # -----------------------------
@@ -258,6 +273,13 @@ def s3_client():
         region_name=os.getenv("S3_REGION", "auto"),
     )
 
+def s3_key_exists(bucket: str, key: str) -> bool:
+    try:
+        s3_client().head_object(Bucket=bucket, Key=key)
+        return True
+    except Exception:
+        return False
+
 def presigned_download_url(file_key: str, expires_seconds: int = 600) -> str:
     client = s3_client()
     bucket = os.getenv("S3_BUCKET")
@@ -267,14 +289,33 @@ def presigned_download_url(file_key: str, expires_seconds: int = 600) -> str:
         ExpiresIn=expires_seconds,
     )
 
+def resolve_preview_key(file_key: str) -> str | None:
+    """
+    Procura um arquivo de preview por convenção:
+    - fichas/abc.pdf -> fichas/abc_preview.pdf
+    - fichas/abc.pdf -> fichas/abc-preview.pdf
+    - fichas/abc.pdf -> previews/abc.pdf
+    """
+    if not file_key or not file_key.lower().endswith(".pdf"):
+        return None
+
+    base = file_key[:-4]
+    candidates = [
+        f"{base}_preview.pdf",
+        f"{base}-preview.pdf",
+        f"previews/{file_key.split('/')[-1]}",
+    ]
+
+    bucket = os.getenv("S3_BUCKET")
+    for k in candidates:
+        if s3_key_exists(bucket, k):
+            return k
+    return None
+
 # -----------------------------
-# Email (SMTP) - retorna sucesso/erro
+# Email (SMTP)
 # -----------------------------
 def send_email(to_email: str, subject: str, text_body: str, html_body: str | None = None) -> bool:
-    """
-    Envia e-mail via SMTP usando variáveis:
-    MAIL_HOST, MAIL_PORT, MAIL_USER, MAIL_PASS, MAIL_FROM
-    """
     host = os.getenv("MAIL_HOST")
     port = int(os.getenv("MAIL_PORT", "587"))
     user = os.getenv("MAIL_USER")
@@ -369,7 +410,7 @@ def mp_fetch_payment(payment_id: str):
     return r.json()
 
 # -----------------------------
-# Bootstrap: roda seed 1x por worker
+# Bootstrap: seed 1x por worker
 # -----------------------------
 @app.before_request
 def _bootstrap():
@@ -378,7 +419,7 @@ def _bootstrap():
         app._db_ready = True
 
 # -----------------------------
-# Contexto global (rodapé + badge)
+# Contexto global
 # -----------------------------
 @app.context_processor
 def inject_globals():
@@ -388,13 +429,69 @@ def inject_globals():
         cart_count = len(cart_get())
     except Exception:
         cart_count = 0
-
     return {
         "support_email": support_email,
         "site_last_update": site_last_update,
         "cart_count": cart_count,
         "current_path": getattr(request, "path", "/"),
     }
+
+# -----------------------------
+# Tokens (Pedido + Download)
+# -----------------------------
+def get_or_create_pedido_access_token(pedido_id: int) -> PedidoAccessToken:
+    now = datetime.utcnow()
+
+    # Se já existe token válido, reutiliza
+    existing = (
+        PedidoAccessToken.query
+        .filter_by(pedido_id=pedido_id)
+        .order_by(PedidoAccessToken.expira_em.desc())
+        .first()
+    )
+    if existing and existing.expira_em > now:
+        return existing
+
+    days = int(os.getenv("PURCHASE_PAGE_DAYS", "90"))
+    expira = now + timedelta(days=days)
+
+    t = PedidoAccessToken(
+        token=secrets.token_urlsafe(32),
+        pedido_id=pedido_id,
+        expira_em=expira,
+    )
+    db.session.add(t)
+    db.session.commit()
+    return t
+
+def get_or_create_download_token(pedido_id: int, ficha_id: int) -> DownloadToken:
+    now = datetime.utcnow()
+    max_downloads = int(os.getenv("DOWNLOAD_MAX", "5"))
+    dias = int(os.getenv("DOWNLOAD_TOKEN_DAYS", "30"))
+    expira = now + timedelta(days=dias)
+
+    # Reutiliza o último token válido (idempotente)
+    existing = (
+        DownloadToken.query
+        .filter_by(pedido_id=pedido_id, ficha_id=ficha_id)
+        .order_by(DownloadToken.expira_em.desc())
+        .first()
+    )
+    if existing and existing.expira_em > now and existing.downloads < existing.max_downloads:
+        return existing
+
+    token_str = secrets.token_urlsafe(32)
+    t = DownloadToken(
+        token=token_str,
+        pedido_id=pedido_id,
+        ficha_id=ficha_id,
+        expira_em=expira,
+        downloads=0,
+        max_downloads=max_downloads,
+    )
+    db.session.add(t)
+    db.session.commit()
+    return t
 
 # -----------------------------
 # Rotas principais
@@ -442,6 +539,32 @@ def busca():
         categorias=categorias,
         tipos=tipos,
         cart_ids=cart_ids,
+        results_count=len(resultados),
+    )
+
+# -----------------------------
+# Detalhes da ficha (produto)
+# -----------------------------
+@app.get("/ficha/<int:ficha_id>")
+def ficha_detalhe(ficha_id):
+    f = Ficha.query.get_or_404(ficha_id)
+    if not f.ativa:
+        abort(404)
+
+    ficha = ficha_to_dict(f)
+    cart_ids = cart_get()
+
+    preview_url = None
+    if storage_enabled() and f.file_key:
+        preview_key = resolve_preview_key(f.file_key)
+        if preview_key:
+            preview_url = presigned_download_url(preview_key, expires_seconds=300)
+
+    return render_template(
+        "ficha.html",
+        ficha=ficha,
+        in_cart=(ficha_id in cart_ids),
+        preview_url=preview_url,
     )
 
 # -----------------------------
@@ -496,7 +619,7 @@ def checkout():
 
     pedido = Pedido(email=email, status="pending", total_centavos=total_cent)
     db.session.add(pedido)
-    db.session.flush()  # pega pedido.id
+    db.session.flush()
 
     itens: list[PedidoItem] = []
     for f in fichas:
@@ -559,7 +682,7 @@ def mp_webhook():
         app.logger.error(f"Erro ao consultar pagamento {payment_id}: {e}")
         return ("ok", 200)
 
-    status = pay.get("status")  # approved, pending, rejected...
+    status = pay.get("status")
     external_reference = pay.get("external_reference")  # pedido.id
 
     if not external_reference:
@@ -569,7 +692,6 @@ def mp_webhook():
     if not pedido:
         return ("ok", 200)
 
-    # Idempotência
     if pedido.status == "paid":
         return ("ok", 200)
 
@@ -579,13 +701,13 @@ def mp_webhook():
         db.session.commit()
 
         try:
-            gerar_tokens_e_enviar_email(pedido.id)
+            gerar_links_e_enviar_email(pedido.id)
         except Exception as e:
-            app.logger.error(f"Erro ao gerar tokens/enviar e-mail pedido {pedido.id}: {e}")
+            app.logger.error(f"Erro ao montar links/enviar e-mail pedido {pedido.id}: {e}")
 
     return ("ok", 200)
 
-def gerar_tokens_e_enviar_email(pedido_id: int):
+def gerar_links_e_enviar_email(pedido_id: int):
     pedido = Pedido.query.get_or_404(pedido_id)
     if pedido.status != "paid":
         return
@@ -594,46 +716,36 @@ def gerar_tokens_e_enviar_email(pedido_id: int):
     if not itens:
         return
 
-    dias = int(os.getenv("DOWNLOAD_TOKEN_DAYS", "30"))
-    expira = datetime.utcnow() + timedelta(days=dias)
-    max_downloads = int(os.getenv("DOWNLOAD_MAX", "5"))
-
     base_url = get_base_url()
-    links = []
 
+    # ✅ Token único "Minha compra"
+    ptoken = get_or_create_pedido_access_token(pedido.id)
+    minha_compra_url = f"{base_url}/minha-compra/{ptoken.token}"
+
+    # ✅ Links por item (mantemos, mas o principal vira "Minha compra")
+    links = []
     for it in itens:
         ficha = Ficha.query.get(it.ficha_id)
         if not ficha or not ficha.file_key:
             continue
+        dt = get_or_create_download_token(pedido.id, ficha.id)
+        links.append((ficha.titulo, f"{base_url}/download/{dt.token}"))
 
-        token_str = secrets.token_urlsafe(32)
-        t = DownloadToken(
-            token=token_str,
-            pedido_id=pedido.id,
-            ficha_id=ficha.id,
-            expira_em=expira,
-            downloads=0,
-            max_downloads=max_downloads,
-        )
-        db.session.add(t)
-        links.append((ficha.titulo, f"{base_url}/download/{token_str}"))
-
-    db.session.commit()
-    if not links:
-        return
-
-    subject = "Compra aprovada — suas fichas técnicas"
+    subject = "Compra aprovada — acesso às suas fichas"
 
     text_lines = [
         "Pagamento aprovado ✅",
         "",
-        "Aqui estão seus links para baixar as fichas (os links expiram):",
+        "Acesse sua página de compra (recomendado):",
+        minha_compra_url,
+        "",
+        "Se preferir, links diretos de download:",
         ""
     ]
     for titulo, link in links:
         text_lines.append(f"- {titulo}: {link}")
     text_lines.append("")
-    text_lines.append("Se precisar de ajuda, responda este e-mail.")
+    text_lines.append(f"Suporte: {os.getenv('SUPPORT_EMAIL', 'suporte@fichasdemalharia.com.br')}")
 
     text_body = "\n".join(text_lines)
 
@@ -641,16 +753,74 @@ def gerar_tokens_e_enviar_email(pedido_id: int):
         f"<li><strong>{titulo}</strong><br><a href='{link}'>{link}</a></li>"
         for titulo, link in links
     ])
+
     html_body = f"""
     <div style="font-family: Arial, sans-serif; line-height: 1.5;">
       <h2>Pagamento aprovado ✅</h2>
-      <p>Aqui estão seus links para baixar as fichas (os links expiram):</p>
+      <p><strong>Acesse sua página de compra (recomendado):</strong></p>
+      <p><a href="{minha_compra_url}">{minha_compra_url}</a></p>
+
+      <p style="margin-top:18px;"><strong>Links diretos de download:</strong></p>
       <ul>{html_items}</ul>
-      <p>Se precisar de ajuda, responda este e-mail.</p>
+
+      <p style="margin-top:18px;">Se precisar de ajuda, responda este e-mail.</p>
     </div>
     """
 
     send_email(pedido.email, subject, text_body, html_body)
+
+# -----------------------------
+# Minha compra (token único)
+# -----------------------------
+@app.get("/minha-compra/<token>")
+def minha_compra(token):
+    pt = PedidoAccessToken.query.filter_by(token=token).first()
+    if not pt:
+        abort(404)
+
+    if datetime.utcnow() > pt.expira_em:
+        abort(410)
+
+    pedido = Pedido.query.get_or_404(pt.pedido_id)
+    if pedido.status != "paid":
+        abort(403)
+
+    itens = PedidoItem.query.filter_by(pedido_id=pedido.id).all()
+    base_url = get_base_url()
+
+    items_view = []
+    total_cent = 0
+
+    for it in itens:
+        ficha = Ficha.query.get(it.ficha_id)
+        # ainda mostra o item mesmo que ficha tenha sido desativada depois
+        titulo = it.titulo_snapshot
+        preco_cent = it.preco_centavos_snapshot
+        total_cent += preco_cent
+
+        download_link = None
+        if ficha and ficha.file_key:
+            dt = get_or_create_download_token(pedido.id, ficha.id)
+            download_link = f"{base_url}/download/{dt.token}"
+
+        details_link = f"/ficha/{it.ficha_id}" if ficha else None
+
+        items_view.append({
+            "titulo": titulo,
+            "preco": format_brl_from_centavos(preco_cent),
+            "download_link": download_link,
+            "details_link": details_link,
+        })
+
+    return render_template(
+        "minha_compra.html",
+        pedido_id=pedido.id,
+        pedido_data=pedido.criado_em.strftime("%d/%m/%Y %H:%M"),
+        email_mask=mask_email(pedido.email),
+        expira_em=pt.expira_em.strftime("%d/%m/%Y"),
+        itens=items_view,
+        total=format_brl_from_centavos(total_cent),
+    )
 
 # -----------------------------
 # Download seguro
@@ -679,7 +849,7 @@ def download(token):
     db.session.commit()
 
     if not storage_enabled():
-        return "Storage não configurado (S3_ENDPOINT/S3_BUCKET/S3_ACCESS_KEY/S3_SECRET_KEY).", 500
+        return "Storage não configurado (S3_*).", 500
 
     url = presigned_download_url(ficha.file_key, expires_seconds=600)
     return redirect(url)
@@ -711,10 +881,28 @@ def contato():
         to_email = os.getenv("SUPPORT_EMAIL", os.getenv("MAIL_FROM", "suporte@fichasdemalharia.com.br"))
         subject = f"[Contato site] {assunto}"
         text = f"De: {email}\nAssunto: {assunto}\n\nMensagem:\n{mensagem}\n"
-
         msg_ok = send_email(to_email, subject, text, None)
 
     return render_template("contato.html", msg_ok=msg_ok)
+
+# -----------------------------
+# Erros amigáveis
+# -----------------------------
+@app.errorhandler(403)
+def err_403(_):
+    return render_template("error.html", code=403, title="Acesso não autorizado", message="Você não tem permissão para acessar esta página."), 403
+
+@app.errorhandler(404)
+def err_404(_):
+    return render_template("error.html", code=404, title="Página não encontrada", message="O endereço informado não existe ou foi removido."), 404
+
+@app.errorhandler(410)
+def err_410(_):
+    return render_template("error.html", code=410, title="Link expirado", message="Este link expirou. Se precisar, solicite suporte e enviaremos um novo acesso."), 410
+
+@app.errorhandler(429)
+def err_429(_):
+    return render_template("error.html", code=429, title="Limite de downloads atingido", message="Você atingiu o limite de downloads para este link. Fale com o suporte para revalidar o acesso."), 429
 
 # -----------------------------
 # Saúde
