@@ -13,6 +13,166 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+  <!-- ✅ PALETA AC HETECE + OVERRIDES GLOBAIS (dentro do HTML) -->
+  <style>
+    :root{
+      --olive:#7B7424;
+      --olive-600:#5E581C;
+      --olive-dark:#434326;
+      --olive-50:#F1F2E8;
+      --olive-100:#E6E7DE;
+      --line-olive:#BFBFA8;
+
+      --bg-100:#F5F5F4;
+      --bg-150:#EAEAE8;
+      --bg-200:#DFDFD9;
+
+      /* compatibilidade */
+      --roxo:var(--olive);
+      --roxo-hover:var(--olive-600);
+      --laranja:var(--olive);
+      --laranja-hover:var(--olive-600);
+      --roxinho:var(--olive-50);
+      --cinza-150:var(--bg-150);
+
+      --lime:#B6F34D;
+      --lime-700:#A2E532;
+
+      --preto:#000;
+      --white:#fff;
+      --text:#111;
+      --muted:#444;
+    }
+
+    /* Fundo do site (cinza claro AcheTece) */
+    html, body { background: var(--bg-100); }
+
+    /* ===== TOPBAR ===== */
+    .topbar{
+      background:#fff !important;
+      border-bottom:1px solid #eee !important;
+    }
+
+    /* Brand */
+    .brand{
+      color:#111 !important;
+      text-decoration:none;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+
+    /* Links do menu */
+    .nav a{
+      color:#111 !important;
+      text-decoration:none;
+      font-weight:600;
+    }
+    .nav a:hover{
+      color: var(--olive-600) !important;
+      text-decoration:underline;
+      text-underline-offset:3px;
+    }
+
+    /* Carrinho como “pill” discreto */
+    .nav-cart{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:9999px;
+      border:1px solid #e6e6e6;
+      background:#fff;
+    }
+    .nav-cart:hover{
+      background: var(--olive-50);
+      border-color: var(--line-olive);
+      text-decoration:none !important;
+    }
+
+    /* Badge do carrinho */
+    .badge{
+      background: var(--olive) !important;
+      color:#fff !important;
+      border:0 !important;
+      border-radius:9999px;
+      font-weight:800;
+      padding:2px 8px;
+      line-height:1.2;
+      font-size:12px;
+    }
+
+    /* ===== CTA BAR (preto + branco, como AcheTece) ===== */
+    .cta-bar{
+      background:#000 !important;
+      color:#fff !important;
+      border-top:1px solid rgba(255,255,255,0.06) !important;
+      margin-top:26px;
+    }
+    .cta-bar h2{ color:#fff !important; }
+    .cta-contact{
+      color:#fff !important;
+      text-decoration:none;
+      opacity:.95;
+    }
+    .cta-contact:hover{
+      color: var(--lime) !important;
+      opacity:1;
+      text-decoration:none;
+    }
+
+    /* ===== FOOTER (branco, linha suave) ===== */
+    .site-footer{
+      background:#fff !important;
+      color:#211a2a !important;
+      border-top:1px solid #eee !important;
+    }
+    .footer-title, .footer-col-title{
+      color:#251c33 !important;
+      font-weight:800;
+    }
+    .site-footer a{
+      color:#2a2535 !important;
+      text-decoration:none;
+    }
+    .site-footer a:hover{
+      text-decoration:underline;
+      text-underline-offset:3px;
+    }
+
+    /* “FM” mark discreto com oliva */
+    .footer-mark{
+      background: var(--olive-50) !important;
+      border:1px solid var(--line-olive) !important;
+      color: var(--olive-dark) !important;
+      font-weight:900;
+    }
+
+    /* Footer bottom */
+    .footer-bottom{
+      border-top:1px solid #f0f0f0;
+    }
+
+    /* ✅ Se algum botão do CSS estiver roxo fixo, o hover neon resolve percepção */
+    button, .btn{
+      transition: background-color .15s ease, color .15s ease, border-color .15s ease;
+    }
+    button:hover, .btn:hover{
+      background: var(--lime) !important;
+      color:#111 !important;
+      border-color: var(--lime) !important;
+      box-shadow:none !important;
+    }
+    button:active, .btn:active{
+      background: var(--lime-700) !important;
+      border-color: var(--lime-700) !important;
+      color:#111 !important;
+    }
+    button:focus-visible, .btn:focus-visible{
+      outline:2px solid var(--lime);
+      outline-offset:2px;
+    }
+  </style>
 </head>
 
 <body>
