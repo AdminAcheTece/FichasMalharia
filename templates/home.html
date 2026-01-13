@@ -2,12 +2,29 @@
 {% block title %}Home | Fichas de Malharia{% endblock %}
 {% block content %}
 
-<h1>Catálogo de Fichas Técnicas de Malharia</h1>
-<p>Encontre fichas prontas com filtros técnicos e checkout seguro.</p>
+<section class="hero">
+  <div class="hero-text">
+    <h1>Catálogo de Fichas Técnicas de Malharia</h1>
+    <p class="subtitle">
+      Encontre fichas prontas com filtros técnicos, carrinho e checkout seguro.
+    </p>
+
+    <div class="trust-row">
+      <span class="trust-pill">✅ Checkout Mercado Pago</span>
+      <span class="trust-pill">🔒 Conexão segura (HTTPS)</span>
+      <span class="trust-pill">⚡ Links de download após pagamento</span>
+      <span class="trust-pill">📩 Suporte por e-mail</span>
+    </div>
+  </div>
+</section>
 
 <div class="card">
-  <h2>Buscar agora</h2>
-  <form class="grid" action="/busca" method="get">
+  <div class="card-head">
+    <h2>Buscar agora</h2>
+    <p class="muted">Defina um filtro inicial e vá direto para os resultados.</p>
+  </div>
+
+  <form class="grid home-grid" action="/busca" method="get">
     <label>
       Tipo de malha
       <select name="tipo">
@@ -29,16 +46,19 @@
     </label>
 
     <label>
-      Gramatura mínima
-      <input type="number" name="gramatura_min" placeholder="Ex: 170">
+      Gramatura mínima (g/m²)
+      <input type="number" name="gramatura_min" placeholder="Ex: 170" min="0" step="1">
     </label>
 
     <label>
-      Gramatura máxima
-      <input type="number" name="gramatura_max" placeholder="Ex: 300">
+      Gramatura máxima (g/m²)
+      <input type="number" name="gramatura_max" placeholder="Ex: 300" min="0" step="1">
     </label>
 
-    <button class="btn" type="submit">Ir para busca</button>
+    <div class="home-actions">
+      <button class="btn" type="submit">Ir para busca</button>
+      <a class="btn ghost" href="/busca">Ver todos</a>
+    </div>
   </form>
 </div>
 
