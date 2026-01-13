@@ -1,1 +1,32 @@
+<!doctype html>
+<html lang="pt-br">
+<head><meta charset="utf-8"><title>Carrinho</title></head>
+<body>
+  <h1>Carrinho</h1>
+
+  {% if fichas|length == 0 %}
+    <p>Seu carrinho está vazio.</p>
+    <a href="/busca">Voltar</a>
+  {% else %}
+    <ul>
+      {% for f in fichas %}
+        <li>
+          {{ f.titulo }} — R$ {{ "%.2f"|format(f.preco) }}
+          <form method="post" action="/cart/remove/{{ f.id }}" style="display:inline;">
+            <button type="submit">Remover</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+
+    <p><strong>Total:</strong> R$ {{ "%.2f"|format(total) }}</p>
+
+    <h3>Finalizar</h3>
+    <form method="post" action="/checkout">
+      <input name="email" placeholder="Seu e-mail" required>
+      <button type="submit">Pagar com Mercado Pago</button>
+    </form>
+  {% endif %}
+</body>
+</html>
 
