@@ -2,6 +2,85 @@
 {% block title %}Home | Fichas de Malharia{% endblock %}
 {% block content %}
 
+<!-- ✅ PALETA AC HETECE (aplicada dentro do HTML) + overrides de cor -->
+<style>
+  :root{
+    --olive:#7B7424;
+    --olive-600:#5E581C;
+    --olive-dark:#434326;
+    --olive-50:#F1F2E8;
+    --olive-100:#E6E7DE;
+    --line-olive:#BFBFA8;
+
+    --bg-100:#F5F5F4;
+    --bg-150:#EAEAE8;
+    --bg-200:#DFDFD9;
+
+    /* compatibilidade */
+    --roxo:var(--olive);
+    --roxo-hover:var(--olive-600);
+    --laranja:var(--olive);
+    --laranja-hover:var(--olive-600);
+    --roxinho:var(--olive-50);
+    --cinza-150:var(--bg-150);
+
+    --lime:#B6F34D;
+    --lime-700:#A2E532;
+
+    --preto:#000;
+  }
+
+  /* ✅ fundo geral (se o base/style estiver deixando branco puro) */
+  body{ background:var(--bg-100); }
+
+  /* ✅ card/head mantendo layout, só cor */
+  .page-head{ background:transparent; }
+  .page-head h1{ color:#111; }
+  .page-head .sub{ color:#444; }
+
+  .card{
+    background:#fff;
+    border:1px solid #eee;
+  }
+
+  /* ✅ botões com a paleta AcheTece */
+  .btn{
+    background:var(--roxo);
+    border:1px solid var(--roxo);
+    color:#fff;
+  }
+  .btn:hover{
+    background:var(--lime);
+    border-color:var(--lime);
+    color:#111;
+  }
+  .btn:active{
+    background:var(--lime-700);
+    border-color:var(--lime-700);
+    color:#111;
+  }
+  .btn:focus-visible{
+    outline:2px solid var(--lime);
+    outline-offset:2px;
+  }
+
+  .btn.ghost{
+    background:transparent;
+    border:1px solid var(--roxo);
+    color:var(--roxo);
+  }
+  .btn.ghost:hover{
+    background:var(--lime);
+    border-color:var(--lime);
+    color:#111;
+  }
+  .btn.ghost:active{
+    background:var(--lime-700);
+    border-color:var(--lime-700);
+    color:#111;
+  }
+</style>
+
 <div class="page-head">
   <div>
     <h1>Catálogo de Fichas Técnicas de Malharia</h1>
