@@ -2,9 +2,20 @@
 {% block title %}Busca | Fichas de Malharia{% endblock %}
 {% block content %}
 
-<h1>Busca de Fichas</h1>
+<div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+  <h1 style="margin:0;">Busca de Fichas</h1>
 
-<div class="card">
+  <a class="btn ghost" href="/cart" style="white-space:nowrap;">
+    🛒 Carrinho
+    {% if cart_count and cart_count > 0 %}
+      <span style="margin-left:8px; display:inline-block; min-width:26px; padding:2px 8px; border-radius:999px; text-align:center; font-weight:700;">
+        {{ cart_count }}
+      </span>
+    {% endif %}
+  </a>
+</div>
+
+<div class="card" style="margin-top:14px;">
   <form class="grid" method="get">
     <label>
       Tipo de malha
@@ -53,6 +64,7 @@
     {% for f in fichas %}
       <div class="card ficha">
         <h3>{{ f.titulo }}</h3>
+
         <div class="meta">
           <span><b>Tipo:</b> {{ f.tipo_malha }}</span>
           <span><b>Comp:</b> {{ f.composicao }}</span>
@@ -60,9 +72,25 @@
           <span><b>Larg:</b> {{ "%.2f"|format(f.largura) }} m</span>
           <span><b>Categoria:</b> {{ f.categoria }}</span>
         </div>
-        <div class="actions">
+
+        <div class="actions" style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
           <div class="price">R$ {{ "%.2f"|format(f.preco) }}</div>
-          <button class="btn" disabled title="Checkout entra no próximo passo">Comprar</button>
+
+          <div style="display:flex; gap:10px; align-items:center;">
+            {% set no_carrinho = (cart_ids is defined and f.id in cart_ids) %}
+
+            {% if no_carrinho %}
+              <span class="btn ghost" style="pointer-events:none; opacity:.85;">✅ No carrinho</span>
+
+              <form method="post" action="/cart/remove/{{ f.id }}" style="margin:0;">
+                <button class="btn ghost" type="submit">Remover</button>
+              </form>
+            {% else %}
+              <form method="post" action="/cart/add/{{ f.id }}" style="margin:0;">
+                <button class="btn" type="submit">Adicionar ao carrinho</button>
+              </form>
+            {% endif %}
+          </div>
         </div>
       </div>
     {% endfor %}
