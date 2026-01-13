@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}{{ ficha.titulo }} | Fichas de Malharia{% endblock %}
+{% block content %}
+
+<div class="card product">
+  <div class="product-head">
+    <div>
+      <h1 class="product-title">{{ ficha.titulo }}</h1>
+      <p class="muted">
+        Tipo: <b>{{ ficha.tipo_malha }}</b> • Categoria: <b>{{ ficha.categoria }}</b>
+      </p>
+    </div>
+
+    <div class="product-buy">
+      <div class="product-price">R$ {{ "%.2f"|format(ficha.preco) }}</div>
+
+      {% if in_cart %}
+        <a class="btn" href="/cart">Ir para o carrinho</a>
+      {% else %}
+        <form method="post" action="/cart/add/{{ ficha.id }}" style="margin:0;">
+          <button class="btn" type="submit">Adicionar ao carrinho</button>
+        </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="product-grid">
+    <div class="card">
+      <h2>Especificações</h2>
+      <div class="meta">
+        <span><b>Composição:</b> {{ ficha.composicao }}</span>
+        <span><b>Gramatura:</b> {{ ficha.gramatura }} g/m²</span>
+        <span><b>Largura:</b> {{ "%.2f"|format(ficha.largura) if ficha.largura else "-" }} m</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>O que você recebe</h2>
+      <ul class="list">
+        <li>Ficha técnica em PDF com especificações e parâmetros do artigo</li>
+        <li>Campos comerciais e recomendações de uso</li>
+        <li>Checklist de qualidade e observações críticas</li>
+      </ul>
+      <p class="muted">Entrega por link após pagamento.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Prévia</h2>
+    {% if preview_url %}
+      <p class="muted">Prévia rápida do conteúdo (arquivo separado de preview).</p>
+      <a class="btn ghost" href="{{ preview_url }}" target="_blank" rel="noopener">Abrir prévia (PDF)</a>
+    {% else %}
+      <p class="muted">
+        Prévia não disponível para esta ficha no momento.
+        (Se você enviar um arquivo de preview para o storage com o sufixo <b>_preview.pdf</b>, ela aparece automaticamente.)
+      </p>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
