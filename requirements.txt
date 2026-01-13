@@ -1,6 +1,7 @@
 Flask
 gunicorn
+Flask-SQLAlchemy
+psycopg[binary]
 requests
-flask_sqlalchemy
 boto3
-psycopg2-binary
+botocore
