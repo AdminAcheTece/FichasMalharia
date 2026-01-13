@@ -2,42 +2,111 @@
 {% block title %}Termos de uso | Fichas de Malharia{% endblock %}
 {% block content %}
 
+<style>
+  .card.legal{
+    background:#fff;
+    border:1px solid #eee;
+  }
+
+  .card.legal h1{ margin-top:0; }
+  .card.legal h2{
+    margin-top:16px;
+    font-size:18px;
+    font-weight:900;
+    color:#111;
+  }
+
+  .card.legal ul{
+    margin:10px 0 0 18px;
+  }
+  .card.legal li{
+    margin:6px 0;
+    color:#333;
+    line-height:1.45;
+  }
+
+  .legal-section{
+    padding:10px 0;
+    border-bottom:1px solid #f0f0f0;
+  }
+  .legal-section:last-child{ border-bottom:0; }
+
+  .support-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    border-radius:9999px;
+    background: var(--olive-50);
+    border:1px solid var(--line-olive);
+    font-weight:900;
+    color:var(--olive-dark);
+    width:fit-content;
+    margin-top:8px;
+  }
+
+  .note{
+    margin-top:12px;
+    padding:12px 14px;
+    border-radius:14px;
+    background: var(--olive-50);
+    border:1px solid var(--line-olive);
+    color:#111;
+    font-weight:700;
+  }
+</style>
+
 <div class="card legal">
   <h1>Termos de uso</h1>
   <p class="muted">Ao acessar e utilizar este site, você concorda com os termos abaixo.</p>
 
-  <h2>1. O que oferecemos</h2>
-  <p>
-    O Fichas de Malharia disponibiliza fichas técnicas digitais para consulta e compra, com entrega por link após confirmação do pagamento.
-  </p>
+  <div class="legal-section">
+    <h2>1. O que oferecemos</h2>
+    <p>
+      O Fichas de Malharia disponibiliza fichas técnicas digitais para consulta e compra, com entrega por link após confirmação do pagamento.
+    </p>
+  </div>
 
-  <h2>2. Uso permitido</h2>
-  <ul>
-    <li>Uso interno na sua empresa para apoio técnico, desenvolvimento e especificação.</li>
-    <li>Compartilhamento com sua equipe direta (ex.: estilo, compras, qualidade) é permitido.</li>
-  </ul>
+  <div class="legal-section">
+    <h2>2. Uso permitido</h2>
+    <ul>
+      <li>Uso interno na sua empresa para apoio técnico, desenvolvimento e especificação.</li>
+      <li>Compartilhamento com sua equipe direta (ex.: estilo, compras, qualidade) é permitido.</li>
+    </ul>
+  </div>
 
-  <h2>3. Uso não permitido</h2>
-  <ul>
-    <li>Revenda, redistribuição pública ou publicação das fichas (integral ou parcial) sem autorização.</li>
-    <li>Disponibilizar em grupos, repositórios, drives públicos ou plataformas de terceiros.</li>
-  </ul>
+  <div class="legal-section">
+    <h2>3. Uso não permitido</h2>
+    <ul>
+      <li>Revenda, redistribuição pública ou publicação das fichas (integral ou parcial) sem autorização.</li>
+      <li>Disponibilizar em grupos, repositórios, drives públicos ou plataformas de terceiros.</li>
+    </ul>
+  </div>
 
-  <h2>4. Pagamento e acesso</h2>
-  <p>
-    O pagamento é processado por provedor externo (ex.: Mercado Pago). A entrega é liberada após confirmação do pagamento,
-    por meio de links de download enviados ao e-mail informado.
-  </p>
+  <div class="legal-section">
+    <h2>4. Pagamento e acesso</h2>
+    <p>
+      O pagamento é processado por provedor externo (ex.: Mercado Pago). A entrega é liberada após confirmação do pagamento,
+      por meio de links de download enviados ao e-mail informado.
+    </p>
+  </div>
 
-  <h2>5. Disponibilidade e alterações</h2>
-  <p>
-    Podemos atualizar o catálogo, preços e conteúdos para manter as fichas alinhadas a padrões técnicos e melhorias do serviço.
-  </p>
+  <div class="legal-section">
+    <h2>5. Disponibilidade e alterações</h2>
+    <p>
+      Podemos atualizar o catálogo, preços e conteúdos para manter as fichas alinhadas a padrões técnicos e melhorias do serviço.
+    </p>
+  </div>
 
-  <h2>6. Contato</h2>
-  <p>
-    Dúvidas? Fale com a gente em <b>{{ support_email|default("suporte@fichasdemalharia.com.br") }}</b>.
-  </p>
+  <div class="legal-section">
+    <h2>6. Contato</h2>
+    <p>Dúvidas? Fale com a gente em:</p>
+    <div class="support-pill">✉️ {{ support_email|default("suporte@fichasdemalharia.com.br") }}</div>
+  </div>
+
+  <div class="note">
+    Ao continuar navegando e comprando, você confirma que leu e concorda com estes termos.
+  </div>
 </div>
 
 {% endblock %}
