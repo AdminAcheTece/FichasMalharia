@@ -1,32 +1,127 @@
-<!doctype html>
-<html lang="pt-br">
-<head><meta charset="utf-8"><title>Carrinho</title></head>
-<body>
-  <h1>Carrinho</h1>
+{% extends "base.html" %}
+{% block title %}Carrinho | Fichas de Malharia{% endblock %}
+{% block content %}
 
-  {% if fichas|length == 0 %}
-    <p>Seu carrinho está vazio.</p>
-    <a href="/busca">Voltar</a>
-  {% else %}
-    <ul>
+<style>
+  /* Ajustes locais (cores/organização) */
+  .cart-list{ margin-top:12px; display:flex; flex-direction:column; gap:10px; }
+  .cart-item{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding:12px;
+    border:1px solid #eee;
+    border-radius:14px;
+    background:#fff;
+  }
+  .cart-item .title{ font-weight:800; color:#111; }
+  .cart-item .price{ font-weight:900; color:#111; white-space:nowrap; }
+  .cart-item .left{ display:flex; flex-direction:column; gap:4px; min-width:0; }
+  .cart-item .right{ display:flex; align-items:center; gap:10px; flex-shrink:0; }
+
+  .total-row{
+    margin-top:14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding-top:12px;
+    border-top:1px solid #f0f0f0;
+    font-size:16px;
+  }
+  .total-row strong{ font-size:18px; }
+
+  .checkout-grid{
+    display:grid;
+    grid-template-columns:1fr auto;
+    gap:10px;
+    align-items:end;
+    margin-top:12px;
+  }
+  @media (max-width:700px){
+    .checkout-grid{ grid-template-columns:1fr; }
+  }
+
+  /* Inputs com borda suave */
+  input[type="email"], input[name="email"]{
+    width:100%;
+    height:44px;
+    padding:10px 12px;
+    border:1px solid #ccc;
+    border-radius:12px;
+    background:#fff;
+    color:#111;
+  }
+</style>
+
+<div class="page-head">
+  <div>
+    <h1>Carrinho</h1>
+    <p class="sub">Revise seus itens e finalize o pagamento com checkout seguro.</p>
+  </div>
+</div>
+
+{% if fichas|length == 0 %}
+
+  <div class="card" style="margin-top:14px;">
+    <h2>Seu carrinho está vazio.</h2>
+    <p class="muted" style="margin-top:6px;">Volte para a busca e adicione as fichas que precisa.</p>
+    <div style="margin-top:12px;">
+      <a class="btn" href="/busca">Ir para busca</a>
+      <a class="btn ghost" href="/">Home</a>
+    </div>
+  </div>
+
+{% else %}
+
+  <div class="card" style="margin-top:14px;">
+    <h2>Itens no carrinho</h2>
+    <p class="muted" style="margin-top:6px;">Você pode remover itens antes de finalizar.</p>
+
+    <div class="cart-list">
       {% for f in fichas %}
-        <li>
-          {{ f.titulo }} — R$ {{ "%.2f"|format(f.preco) }}
-          <form method="post" action="/cart/remove/{{ f.id }}" style="display:inline;">
-            <button type="submit">Remover</button>
-          </form>
-        </li>
+        <div class="cart-item">
+          <div class="left">
+            <div class="title">{{ f.titulo }}</div>
+            <div class="muted">Preço unitário</div>
+          </div>
+
+          <div class="right">
+            <div class="price">R$ {{ "%.2f"|format(f.preco) }}</div>
+
+            <form method="post" action="/cart/remove/{{ f.id }}" style="margin:0;">
+              <button class="btn ghost" type="submit">Remover</button>
+            </form>
+          </div>
+        </div>
       {% endfor %}
-    </ul>
+    </div>
 
-    <p><strong>Total:</strong> R$ {{ "%.2f"|format(total) }}</p>
+    <div class="total-row">
+      <div><b>Total</b></div>
+      <div><strong>R$ {{ "%.2f"|format(total) }}</strong></div>
+    </div>
+  </div>
 
-    <h3>Finalizar</h3>
-    <form method="post" action="/checkout">
-      <input name="email" placeholder="Seu e-mail" required>
-      <button type="submit">Pagar com Mercado Pago</button>
+  <div class="card" style="margin-top:14px;">
+    <h2>Finalizar</h2>
+    <p class="muted" style="margin-top:6px;">Informe seu e-mail para receber o link de acesso após o pagamento.</p>
+
+    <form method="post" action="/checkout" class="checkout-grid">
+      <label style="display:block;">
+        <div style="font-weight:700; margin-bottom:6px;">Seu e-mail</div>
+        <input type="email" name="email" placeholder="ex: seuemail@dominio.com" required>
+      </label>
+
+      <button class="btn" type="submit">Pagar com Mercado Pago</button>
     </form>
-  {% endif %}
-</body>
-</html>
 
+    <div class="muted" style="margin-top:10px; font-size:13px;">
+      🔒 Pagamento processado via Mercado Pago • ⚡ Entrega por link no e-mail
+    </div>
+  </div>
+
+{% endif %}
+
+{% endblock %}
