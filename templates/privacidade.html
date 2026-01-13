@@ -2,45 +2,103 @@
 {% block title %}Política de privacidade | Fichas de Malharia{% endblock %}
 {% block content %}
 
+<style>
+  .card.legal{
+    background:#fff;
+    border:1px solid #eee;
+  }
+
+  .card.legal h1{ margin-top:0; }
+  .card.legal h2{
+    margin-top:16px;
+    font-size:18px;
+    font-weight:900;
+    color:#111;
+  }
+
+  /* listas mais legíveis */
+  .card.legal ul{
+    margin:10px 0 0 18px;
+  }
+  .card.legal li{
+    margin:6px 0;
+    color:#333;
+    line-height:1.45;
+  }
+
+  /* separador visual discreto entre blocos (opcional) */
+  .legal-section{
+    padding:10px 0;
+    border-bottom:1px solid #f0f0f0;
+  }
+  .legal-section:last-child{ border-bottom:0; }
+
+  /* destaque de e-mail */
+  .support-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    padding:6px 10px;
+    border-radius:9999px;
+    background: var(--olive-50);
+    border:1px solid var(--line-olive);
+    font-weight:800;
+    color:var(--olive-dark);
+    width:fit-content;
+  }
+</style>
+
 <div class="card legal">
   <h1>Política de privacidade (LGPD)</h1>
   <p class="muted">Transparência sobre o uso dos seus dados.</p>
 
-  <h2>1. Dados que coletamos</h2>
-  <ul>
-    <li><b>E-mail</b> (para envio de links de download e suporte).</li>
-    <li><b>Dados de compra</b> (itens, valores, status e identificadores do pagamento).</li>
-    <li><b>Dados técnicos</b> (logs de acesso e segurança, quando aplicável).</li>
-  </ul>
+  <div class="legal-section">
+    <h2>1. Dados que coletamos</h2>
+    <ul>
+      <li><b>E-mail</b> (para envio de links de download e suporte).</li>
+      <li><b>Dados de compra</b> (itens, valores, status e identificadores do pagamento).</li>
+      <li><b>Dados técnicos</b> (logs de acesso e segurança, quando aplicável).</li>
+    </ul>
+  </div>
 
-  <h2>2. Como usamos</h2>
-  <ul>
-    <li>Processar pagamentos, confirmar pedidos e entregar os downloads.</li>
-    <li>Atender suporte e resolver problemas de acesso.</li>
-    <li>Prevenir fraude e aumentar a segurança do serviço.</li>
-  </ul>
+  <div class="legal-section">
+    <h2>2. Como usamos</h2>
+    <ul>
+      <li>Processar pagamentos, confirmar pedidos e entregar os downloads.</li>
+      <li>Atender suporte e resolver problemas de acesso.</li>
+      <li>Prevenir fraude e aumentar a segurança do serviço.</li>
+    </ul>
+  </div>
 
-  <h2>3. Compartilhamento</h2>
-  <p>
-    Compartilhamos apenas o necessário com provedores de pagamento e infraestrutura (ex.: checkout e entrega).
-    Não vendemos seus dados.
-  </p>
+  <div class="legal-section">
+    <h2>3. Compartilhamento</h2>
+    <p>
+      Compartilhamos apenas o necessário com provedores de pagamento e infraestrutura (ex.: checkout e entrega).
+      Não vendemos seus dados.
+    </p>
+  </div>
 
-  <h2>4. Retenção</h2>
-  <p>
-    Mantemos registros de compra pelo tempo necessário para suporte, conformidade e segurança.
-  </p>
+  <div class="legal-section">
+    <h2>4. Retenção</h2>
+    <p>
+      Mantemos registros de compra pelo tempo necessário para suporte, conformidade e segurança.
+    </p>
+  </div>
 
-  <h2>5. Seus direitos</h2>
-  <p>
-    Você pode solicitar correção, acesso ou exclusão de dados quando aplicável. Solicite pelo e-mail:
-    <b>{{ support_email|default("suporte@fichasdemalharia.com.br") }}</b>.
-  </p>
+  <div class="legal-section">
+    <h2>5. Seus direitos</h2>
+    <p>
+      Você pode solicitar correção, acesso ou exclusão de dados quando aplicável. Solicite pelo e-mail:
+    </p>
+    <div class="support-pill">✉️ {{ support_email|default("suporte@fichasdemalharia.com.br") }}</div>
+  </div>
 
-  <h2>6. Cookies</h2>
-  <p>
-    Podemos usar cookies/sessão para funcionamento do carrinho e experiência de navegação.
-  </p>
+  <div class="legal-section">
+    <h2>6. Cookies</h2>
+    <p>
+      Podemos usar cookies/sessão para funcionamento do carrinho e experiência de navegação.
+    </p>
+  </div>
 </div>
 
 {% endblock %}
