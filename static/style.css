@@ -305,3 +305,98 @@ input,select{padding:10px;border:1px solid #d9d9e6;border-radius:10px}
   white-space:nowrap;
 }
 .link:hover{ text-decoration:underline; opacity:1; }
+
+/* ===== Utilitários ===== */
+.muted{opacity:.75}
+.active{opacity:1}
+.nav a.active{opacity:1; text-decoration:underline; text-underline-offset:6px}
+
+/* ===== Hero / Chips ===== */
+.hero{margin-top:18px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.chip{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 12px;border-radius:999px;
+  background:#fff;border:1px solid #e6e6ef;
+  font-size:14px;font-weight:700;
+}
+
+/* ===== Grid actions (Home) ===== */
+.grid-actions{
+  grid-column: 1 / -1;
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+/* ===== Footer estilo "AcheTece" ===== */
+.site-footer{margin-top:34px}
+.footer-cta{
+  background:#0f0f12;
+  color:#fff;
+  padding:26px 0;
+}
+.footer-cta-inner{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+}
+.footer-cta-title h2{margin:0 0 6px; font-size:34px; font-weight:900}
+.footer-contacts{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-width: 320px;
+}
+.footer-contact{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  text-decoration:none;
+  color:#fff;
+  opacity:.95;
+  font-weight:700;
+}
+.footer-contact:hover{opacity:1}
+.footer-contact .ico{width:22px; display:inline-flex; justify-content:center}
+
+.footer-links{
+  background:#fff;
+  border-top:1px solid #e6e6ef;
+  padding:26px 0 12px;
+}
+.footer-grid{
+  display:grid;
+  grid-template-columns: 1.2fr 1fr 1fr;
+  gap:18px;
+}
+.footer-title{font-weight:900; margin-bottom:10px}
+.footer-text{max-width:420px}
+.footer-col a{
+  display:block;
+  color:#111;
+  text-decoration:none;
+  margin:8px 0;
+  font-weight:700;
+  opacity:.9;
+}
+.footer-col a:hover{opacity:1; text-decoration:underline}
+.footer-small{margin-top:10px; font-weight:700}
+
+.footer-bottom{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  border-top:1px solid #e6e6ef;
+  padding-top:12px;
+  margin-top:16px;
+}
+
+@media(max-width:900px){
+  .footer-cta-inner{flex-direction:column}
+  .footer-contacts{min-width:unset}
+  .footer-grid{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column; align-items:flex-start}
+}
