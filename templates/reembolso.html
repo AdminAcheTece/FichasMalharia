@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Política de reembolso | Fichas de Malharia{% endblock %}
+{% block content %}
+
+<div class="card legal">
+  <h1>Política de reembolso</h1>
+  <p class="muted">Regras claras para um produto digital.</p>
+
+  <h2>1. Produto digital e entrega</h2>
+  <p>
+    As fichas são conteúdos digitais entregues por link após confirmação de pagamento.
+  </p>
+
+  <h2>2. Quando avaliamos reembolso</h2>
+  <ul>
+    <li>Problema técnico comprovado que impeça o download e não seja resolvido pelo suporte.</li>
+    <li>Compra duplicada do mesmo item no mesmo pedido (quando aplicável).</li>
+  </ul>
+
+  <h2>3. Quando não se aplica</h2>
+  <ul>
+    <li>Após o download bem-sucedido do conteúdo.</li>
+    <li>Incompatibilidade de expectativa (ex.: queria outro tipo de ficha) — por isso, recomendamos revisar título e descrição antes da compra.</li>
+  </ul>
+
+  <h2>4. Como solicitar</h2>
+  <p>
+    Envie e-mail para <b>{{ support_email|default("suporte@fichasdemalharia.com.br") }}</b> com:
+  </p>
+  <ul>
+    <li>E-mail usado na compra</li>
+    <li>Data/horário aproximado</li>
+    <li>Descrição do problema</li>
+  </ul>
+
+  <p class="muted">
+    Nosso objetivo é resolver rapidamente e com transparência.
+  </p>
+</div>
+
+{% endblock %}
