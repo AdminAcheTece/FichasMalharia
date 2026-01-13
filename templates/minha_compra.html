@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Minha compra | Fichas de Malharia{% endblock %}
+{% block content %}
+
+<div class="card legal">
+  <h1>Minha compra</h1>
+  <p class="muted">
+    Pedido <b>#{{ pedido_id }}</b> • {{ pedido_data }} • {{ email_mask }}<br>
+    Acesso válido até <b>{{ expira_em }}</b>.
+  </p>
+
+  <div class="purchase-kpis">
+    <div class="kpi">
+      <div class="kpi-label">Total</div>
+      <div class="kpi-value">{{ total }}</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Entrega</div>
+      <div class="kpi-value">Links de download</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Suporte</div>
+      <div class="kpi-value">{{ support_email }}</div>
+    </div>
+  </div>
+
+  <h2>Seus itens</h2>
+
+  <div class="purchase-list">
+    {% for it in itens %}
+      <div class="purchase-item">
+        <div class="purchase-main">
+          <div class="purchase-title">{{ it.titulo }}</div>
+          <div class="purchase-meta">{{ it.preco }}</div>
+        </div>
+
+        <div class="purchase-actions">
+          {% if it.details_link %}
+            <a class="btn ghost" href="{{ it.details_link }}">Ver detalhes</a>
+          {% endif %}
+
+          {% if it.download_link %}
+            <a class="btn" href="{{ it.download_link }}">Baixar</a>
+          {% else %}
+            <span class="muted">Arquivo indisponível</span>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <hr class="divider">
+
+  <p class="muted">
+    Dica: se o download não iniciar, tente novamente ou use outro navegador. Se persistir, fale com o suporte.
+  </p>
+</div>
+
+{% endblock %}
