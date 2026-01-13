@@ -23,7 +23,7 @@
     background:#fff;
   }
 
-  /* Meta em “chips” suaves (sem mudar layout geral) */
+  /* Meta */
   .meta{
     display:flex;
     flex-wrap:wrap;
@@ -34,13 +34,8 @@
   }
   .meta span b{ color:#111; }
 
-  /* Preço com destaque discreto */
-  .price{
-    font-weight:900;
-    color:#111;
-  }
+  .price{ font-weight:900; color:#111; }
 
-  /* Linha de ações mais alinhada */
   .actions{
     display:flex;
     align-items:center;
@@ -56,6 +51,27 @@
     gap:10px;
     flex-wrap:wrap;
     justify-content:flex-end;
+  }
+
+  /* ✅ NOVO: botões do filtro lado a lado */
+  .filter-actions{
+    grid-column: 1 / -1;
+    display:flex;
+    gap:12px;
+    justify-content:flex-start; /* se quiser à direita, troque por flex-end */
+    align-items:center;
+    margin-top:4px;
+  }
+  .filter-actions .btn{
+    min-width: 180px;         /* deixa parecido com o seu “Limpar” atual */
+    justify-content:center;
+  }
+  @media (max-width:700px){
+    .filter-actions{
+      flex-direction:column;  /* no celular fica um embaixo do outro */
+      align-items:stretch;
+    }
+    .filter-actions .btn{ min-width: 0; width:100%; }
   }
 </style>
 
@@ -103,8 +119,11 @@
       <input type="number" name="gramatura_max" value="{{ filtros.gramatura_max or '' }}">
     </label>
 
-    <button class="btn" type="submit">Filtrar</button>
-    <a class="btn ghost" href="/busca">Limpar</a>
+    <!-- ✅ AQUI: os dois botões na mesma linha (linha do “Limpar”) -->
+    <div class="filter-actions">
+      <a class="btn ghost" href="/busca">Limpar</a>
+      <button class="btn" type="submit">Filtrar</button>
+    </div>
   </form>
 </div>
 
