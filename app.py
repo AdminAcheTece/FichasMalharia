@@ -3,8 +3,8 @@ import secrets
 from datetime import datetime, timedelta
 from decimal import Decimal
 
-import requests
 import boto3
+import requests
 from botocore.config import Config
 
 from flask import (
@@ -22,7 +22,7 @@ app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "dev-secret-change-me")
 
 # ✅ DB (Render Postgres)
-# Render costuma fornecer DATABASE_URL; às vezes vem "postgres://" e o SQLAlchemy quer "postgresql://"
+# Render às vezes fornece DATABASE_URL como "postgres://"
 db_url = os.getenv("DATABASE_URL", "sqlite:///local.db")
 if db_url.startswith("postgres://"):
     db_url = db_url.replace("postgres://", "postgresql://", 1)
@@ -46,9 +46,7 @@ class Ficha(db.Model):
     categoria = db.Column(db.String(80), index=True)
 
     preco_centavos = db.Column(db.Integer, nullable=False)
-
-    # caminho do arquivo no bucket (ex: "fichas/meia_malha_alg_170.pdf")
-    file_key = db.Column(db.String(255), nullable=True)
+    file_key = db.Column(db.String(255), nullable=True)  # ex: "fichas/arquivo.pdf"
 
     ativa = db.Column(db.Boolean, default=True, index=True)
     criado_em = db.Column(db.DateTime, default=datetime.utcnow)
@@ -91,12 +89,10 @@ class DownloadToken(db.Model):
     max_downloads = db.Column(db.Integer, default=5)
 
 # -----------------------------
-# Helpers (DB seed + filters)
+# Helpers (seed + filtros)
 # -----------------------------
-# ✅ Seus mocks (vamos usar para "seed" inicial do banco)
 FICHAS_MOCK = [
     {
-        "id": 1,
         "titulo": "Meia Malha 100% Algodão 170 g/m²",
         "tipo_malha": "Meia Malha",
         "composicao": "100% Algodão",
@@ -107,7 +103,6 @@ FICHAS_MOCK = [
         "file_key": "fichas/meia_malha_algodao_170.pdf",
     },
     {
-        "id": 2,
         "titulo": "Piquet c/ Elastano 220 g/m²",
         "tipo_malha": "Piquet",
         "composicao": "96% Algodão 4% Elastano",
@@ -118,7 +113,6 @@ FICHAS_MOCK = [
         "file_key": "fichas/piquet_elastano_220.pdf",
     },
     {
-        "id": 3,
         "titulo": "Moletom 3 cabos 300 g/m²",
         "tipo_malha": "Moletom",
         "composicao": "50% Algodão 50% Poliéster",
@@ -134,7 +128,7 @@ def preco_to_centavos(preco_float: float) -> int:
     return int(Decimal(str(preco_float)) * 100)
 
 def ensure_db():
-    """Cria tabelas e (opcional) faz seed das fichas se estiver vazio."""
+    """Cria tabelas e faz seed das fichas se estiver vazio."""
     db.create_all()
     if Ficha.query.count() == 0:
         for f in FICHAS_MOCK:
@@ -153,8 +147,18 @@ def ensure_db():
         db.session.commit()
 
 def get_distinct_filters():
-    categorias = [c[0] for c in db.session.query(Ficha.categoria).filter(Ficha.ativa.is_(True)).distinct().order_by(Ficha.categoria).all() if c[0]]
-    tipos = [t[0] for t in db.session.query(Ficha.tipo_malha).filter(Ficha.ativa.is_(True)).distinct().order_by(Ficha.tipo_malha).all() if t[0]]
+    categorias = [
+        c[0] for c in db.session.query(Ficha.categoria)
+        .filter(Ficha.ativa.is_(True))
+        .distinct().order_by(Ficha.categoria).all()
+        if c[0]
+    ]
+    tipos = [
+        t[0] for t in db.session.query(Ficha.tipo_malha)
+        .filter(Ficha.ativa.is_(True))
+        .distinct().order_by(Ficha.tipo_malha).all()
+        if t[0]
+    ]
     return categorias, tipos
 
 def ficha_to_dict(f: Ficha):
@@ -169,24 +173,57 @@ def ficha_to_dict(f: Ficha):
         "preco": float(Decimal(f.preco_centavos) / 100),
     }
 
+def get_base_url() -> str:
+    """BASE_URL (recomendado) ou host atual como fallback."""
+    env = (os.getenv("BASE_URL") or "").strip().rstrip("/")
+    if env:
+        return env
+    try:
+        return request.host_url.rstrip("/")
+    except Exception:
+        return "http://localhost:5000"
+
 # -----------------------------
-# Cart (session)
+# Carrinho (session) - NORMALIZADO
 # -----------------------------
 def cart_get():
-    return session.get("cart", [])
+    """
+    Retorna SEMPRE lista de IDs INT (sem duplicar).
+    Evita bug no template (f.id in cart_ids) e no SQL IN().
+    """
+    raw = session.get("cart", [])
+    ids = []
+    for x in raw:
+        try:
+            ids.append(int(x))
+        except (TypeError, ValueError):
+            continue
+
+    seen = set()
+    normalized = []
+    for i in ids:
+        if i not in seen:
+            seen.add(i)
+            normalized.append(i)
+
+    session["cart"] = normalized
+    session.modified = True
+    return normalized
 
 def cart_set(items):
-    session["cart"] = items
+    session["cart"] = [int(x) for x in items]
     session.modified = True
 
 def cart_add(ficha_id: int):
     items = cart_get()
+    ficha_id = int(ficha_id)
     if ficha_id not in items:
         items.append(ficha_id)
     cart_set(items)
 
 def cart_remove(ficha_id: int):
     items = cart_get()
+    ficha_id = int(ficha_id)
     items = [i for i in items if i != ficha_id]
     cart_set(items)
 
@@ -231,9 +268,9 @@ def presigned_download_url(file_key: str, expires_seconds: int = 600) -> str:
     )
 
 # -----------------------------
-# Email (SMTP simples)
+# Email (SMTP) - retorna sucesso/erro
 # -----------------------------
-def send_email(to_email: str, subject: str, text_body: str, html_body: str | None = None):
+def send_email(to_email: str, subject: str, text_body: str, html_body: str | None = None) -> bool:
     """
     Envia e-mail via SMTP usando variáveis:
     MAIL_HOST, MAIL_PORT, MAIL_USER, MAIL_PASS, MAIL_FROM
@@ -246,7 +283,7 @@ def send_email(to_email: str, subject: str, text_body: str, html_body: str | Non
 
     if not all([host, port, user, password, mail_from]):
         app.logger.warning("E-mail não enviado: variáveis MAIL_* incompletas.")
-        return
+        return False
 
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
@@ -265,29 +302,29 @@ def send_email(to_email: str, subject: str, text_body: str, html_body: str | Non
     if html_body:
         msg.attach(MIMEText(html_body, "html", "utf-8"))
 
-    with smtplib.SMTP(host, port) as server:
-        server.starttls()
-        server.login(user, password)
-        server.sendmail(mail_from, [to_email], msg.as_string())
+    try:
+        with smtplib.SMTP(host, port) as server:
+            server.starttls()
+            server.login(user, password)
+            server.sendmail(mail_from, [to_email], msg.as_string())
+        return True
+    except Exception as e:
+        app.logger.error(f"Erro ao enviar e-mail: {e}")
+        return False
 
 # -----------------------------
-# Mercado Pago (Checkout + Webhook)
+# Mercado Pago
 # -----------------------------
 def mp_enabled():
     return bool(os.getenv("MP_ACCESS_TOKEN"))
 
 def mp_create_preference(pedido: Pedido, itens: list[PedidoItem]):
-    """
-    Cria preferência de pagamento via API REST do Mercado Pago.
-    Retorna dict com 'id' e 'init_point' (link de pagamento).
-    """
     access_token = os.getenv("MP_ACCESS_TOKEN")
     if not access_token:
         raise RuntimeError("MP_ACCESS_TOKEN não configurado.")
 
     items_payload = []
     for it in itens:
-        # MP pede price unit em float (BRL)
         unit_price = float(Decimal(it.preco_centavos_snapshot) / 100)
         items_payload.append({
             "title": it.titulo_snapshot,
@@ -296,11 +333,7 @@ def mp_create_preference(pedido: Pedido, itens: list[PedidoItem]):
             "currency_id": "BRL",
         })
 
-    base_url = os.getenv("BASE_URL", "").rstrip("/")  # ex: https://fichasdemalharia.com.br
-    if not base_url:
-        # fallback: tenta montar do request, mas no Render pode variar; melhor setar BASE_URL
-        base_url = "http://localhost:5000"
-
+    base_url = get_base_url()
     notification_url = f"{base_url}/mp/webhook"
 
     payload = {
@@ -336,13 +369,36 @@ def mp_fetch_payment(payment_id: str):
     return r.json()
 
 # -----------------------------
-# Routes (mantidas + novas)
+# Bootstrap: roda seed 1x por worker
 # -----------------------------
 @app.before_request
 def _bootstrap():
-    # Garante tabelas e seed das fichas (uma vez)
-    ensure_db()
+    if not getattr(app, "_db_ready", False):
+        ensure_db()
+        app._db_ready = True
 
+# -----------------------------
+# Contexto global (rodapé + badge)
+# -----------------------------
+@app.context_processor
+def inject_globals():
+    support_email = os.getenv("SUPPORT_EMAIL", "suporte@fichasdemalharia.com.br")
+    site_last_update = os.getenv("SITE_LAST_UPDATE", "2026-01-13")
+    try:
+        cart_count = len(cart_get())
+    except Exception:
+        cart_count = 0
+
+    return {
+        "support_email": support_email,
+        "site_last_update": site_last_update,
+        "cart_count": cart_count,
+        "current_path": getattr(request, "path", "/"),
+    }
+
+# -----------------------------
+# Rotas principais
+# -----------------------------
 @app.get("/")
 def home():
     categorias, tipos = get_distinct_filters()
@@ -371,8 +427,6 @@ def busca():
 
     resultados = [ficha_to_dict(f) for f in q.order_by(Ficha.id.desc()).all()]
     categorias, tipos = get_distinct_filters()
-
-    # ✅ Carrinho para o template (para mostrar "No carrinho" e contador)
     cart_ids = cart_get()
 
     return render_template(
@@ -387,73 +441,11 @@ def busca():
         },
         categorias=categorias,
         tipos=tipos,
-        cart_ids=cart_ids,          # ✅ necessário para checar "f.id in cart_ids"
-        cart_count=len(cart_ids),   # ✅ badge/contador
+        cart_ids=cart_ids,
     )
 
-from decimal import Decimal
-from flask import session, redirect, request, url_for, render_template, abort, flash
-
 # -----------------------------
-# Cart helpers (session)
-# -----------------------------
-def cart_get():
-    """
-    Retorna sempre uma lista de IDs INT (sem duplicar).
-    Isso evita bug no template (f.id in cart_ids) e no SQL IN().
-    """
-    raw = session.get("cart", [])
-    ids = []
-    for x in raw:
-        try:
-            ids.append(int(x))
-        except (TypeError, ValueError):
-            continue
-    # remove duplicados mantendo ordem
-    seen = set()
-    normalized = []
-    for i in ids:
-        if i not in seen:
-            seen.add(i)
-            normalized.append(i)
-    session["cart"] = normalized  # normaliza e salva de volta
-    session.modified = True
-    return normalized
-
-def cart_set(items):
-    session["cart"] = [int(x) for x in items]
-    session.modified = True
-
-def cart_add(ficha_id: int):
-    items = cart_get()
-    if ficha_id not in items:
-        items.append(int(ficha_id))
-    cart_set(items)
-
-def cart_remove(ficha_id: int):
-    items = cart_get()
-    items = [i for i in items if i != int(ficha_id)]
-    cart_set(items)
-
-def cart_clear():
-    cart_set([])
-
-def cart_total_centavos():
-    ids = cart_get()
-    if not ids:
-        return 0
-    fichas = Ficha.query.filter(Ficha.id.in_(ids), Ficha.ativa.is_(True)).all()
-    return sum(f.preco_centavos for f in fichas)
-
-@app.context_processor
-def inject_cart_count():
-    try:
-        return {"cart_count": len(cart_get())}
-    except Exception:
-        return {"cart_count": 0}
-
-# -----------------------------
-# Rotas do Carrinho
+# Carrinho
 # -----------------------------
 @app.post("/cart/add/<int:ficha_id>")
 def cart_add_route(ficha_id):
@@ -475,11 +467,10 @@ def cart_view():
     fichas_dict = [ficha_to_dict(f) for f in fichas]
     total_cent = sum(f.preco_centavos for f in fichas)
     total = float(Decimal(total_cent) / 100)
-
     return render_template("cart.html", fichas=fichas_dict, total=total)
 
 # -----------------------------
-# Checkout (cria pedido + preferência MP)
+# Checkout
 # -----------------------------
 @app.post("/checkout")
 def checkout():
@@ -491,7 +482,7 @@ def checkout():
         flash("Informe um e-mail válido para receber os links de download.", "error")
         return redirect(url_for("cart_view"))
 
-    ids = cart_get()  # ✅ já vem normalizado em INT
+    ids = cart_get()
     if not ids:
         flash("Seu carrinho está vazio.", "error")
         return redirect(url_for("busca"))
@@ -505,9 +496,9 @@ def checkout():
 
     pedido = Pedido(email=email, status="pending", total_centavos=total_cent)
     db.session.add(pedido)
-    db.session.flush()  # obtém pedido.id
+    db.session.flush()  # pega pedido.id
 
-    itens = []
+    itens: list[PedidoItem] = []
     for f in fichas:
         it = PedidoItem(
             pedido_id=pedido.id,
@@ -532,7 +523,9 @@ def checkout():
 
     return redirect(init_point)
 
-# ---- Páginas de retorno do MP (opcionais, mas úteis) ----
+# -----------------------------
+# Retornos Mercado Pago
+# -----------------------------
 @app.get("/pedido/<int:pedido_id>/sucesso")
 def pedido_sucesso(pedido_id):
     return render_template("pedido_status.html", status="success", pedido_id=pedido_id)
@@ -545,24 +538,19 @@ def pedido_falha(pedido_id):
 def pedido_pendente(pedido_id):
     return render_template("pedido_status.html", status="pending", pedido_id=pedido_id)
 
-# ---- Webhook Mercado Pago ----
+# -----------------------------
+# Webhook Mercado Pago
+# -----------------------------
 @app.post("/mp/webhook")
 def mp_webhook():
-    # MP pode mandar parâmetros diferentes dependendo do tipo de notificação.
-    # Vamos tentar cobrir os formatos mais comuns:
     payload = request.get_json(silent=True) or {}
-    payment_id = None
 
-    # Formato comum: ?type=payment&data.id=123
-    payment_id = request.args.get("data.id") or request.args.get("id") or payment_id
-
-    # Formato JSON: {"type":"payment","data":{"id":"123"}}
+    payment_id = request.args.get("data.id") or request.args.get("id")
     if not payment_id:
         data = payload.get("data") or {}
         payment_id = data.get("id") or payload.get("id")
 
     if not payment_id:
-        # sem id, não dá para processar
         return ("ok", 200)
 
     try:
@@ -572,7 +560,7 @@ def mp_webhook():
         return ("ok", 200)
 
     status = pay.get("status")  # approved, pending, rejected...
-    external_reference = pay.get("external_reference")  # colocamos como pedido.id
+    external_reference = pay.get("external_reference")  # pedido.id
 
     if not external_reference:
         return ("ok", 200)
@@ -581,7 +569,7 @@ def mp_webhook():
     if not pedido:
         return ("ok", 200)
 
-    # Idempotência: se já está pago, só devolve ok
+    # Idempotência
     if pedido.status == "paid":
         return ("ok", 200)
 
@@ -590,7 +578,6 @@ def mp_webhook():
         pedido.mp_payment_id = str(payment_id)
         db.session.commit()
 
-        # cria tokens + envia e-mail
         try:
             gerar_tokens_e_enviar_email(pedido.id)
         except Exception as e:
@@ -607,20 +594,16 @@ def gerar_tokens_e_enviar_email(pedido_id: int):
     if not itens:
         return
 
-    # Expiração padrão: 30 dias
     dias = int(os.getenv("DOWNLOAD_TOKEN_DAYS", "30"))
     expira = datetime.utcnow() + timedelta(days=dias)
     max_downloads = int(os.getenv("DOWNLOAD_MAX", "5"))
 
-    base_url = os.getenv("BASE_URL", "").rstrip("/")
-    if not base_url:
-        base_url = "http://localhost:5000"
-
+    base_url = get_base_url()
     links = []
+
     for it in itens:
         ficha = Ficha.query.get(it.ficha_id)
         if not ficha or not ficha.file_key:
-            # Se não tiver arquivo, pula (ou você pode travar e alertar)
             continue
 
         token_str = secrets.token_urlsafe(32)
@@ -636,7 +619,6 @@ def gerar_tokens_e_enviar_email(pedido_id: int):
         links.append((ficha.titulo, f"{base_url}/download/{token_str}"))
 
     db.session.commit()
-
     if not links:
         return
 
@@ -655,8 +637,10 @@ def gerar_tokens_e_enviar_email(pedido_id: int):
 
     text_body = "\n".join(text_lines)
 
-    # HTML simples (sem exagero para reduzir risco de spam)
-    html_items = "".join([f"<li><strong>{titulo}</strong><br><a href='{link}'>{link}</a></li>" for titulo, link in links])
+    html_items = "".join([
+        f"<li><strong>{titulo}</strong><br><a href='{link}'>{link}</a></li>"
+        for titulo, link in links
+    ])
     html_body = f"""
     <div style="font-family: Arial, sans-serif; line-height: 1.5;">
       <h2>Pagamento aprovado ✅</h2>
@@ -668,7 +652,9 @@ def gerar_tokens_e_enviar_email(pedido_id: int):
 
     send_email(pedido.email, subject, text_body, html_body)
 
-# ---- Download seguro ----
+# -----------------------------
+# Download seguro
+# -----------------------------
 @app.get("/download/<token>")
 def download(token):
     t = DownloadToken.query.filter_by(token=token).first()
@@ -676,7 +662,7 @@ def download(token):
         abort(404)
 
     if datetime.utcnow() > t.expira_em:
-        abort(410)  # expirou
+        abort(410)
 
     if t.downloads >= t.max_downloads:
         abort(429)
@@ -689,17 +675,50 @@ def download(token):
     if not ficha or not ficha.ativa or not ficha.file_key:
         abort(404)
 
-    # incrementa contador
     t.downloads += 1
     db.session.commit()
 
-    # Se storage não estiver configurado, falha claramente
     if not storage_enabled():
         return "Storage não configurado (S3_ENDPOINT/S3_BUCKET/S3_ACCESS_KEY/S3_SECRET_KEY).", 500
 
     url = presigned_download_url(ficha.file_key, expires_seconds=600)
     return redirect(url)
 
+# -----------------------------
+# Institucional
+# -----------------------------
+@app.get("/termos")
+def termos():
+    return render_template("termos.html")
+
+@app.get("/privacidade")
+def privacidade():
+    return render_template("privacidade.html")
+
+@app.get("/reembolso")
+def reembolso():
+    return render_template("reembolso.html")
+
+@app.route("/contato", methods=["GET", "POST"])
+def contato():
+    msg_ok = False
+
+    if request.method == "POST":
+        email = (request.form.get("email") or "").strip()
+        assunto = (request.form.get("assunto") or "").strip()
+        mensagem = (request.form.get("mensagem") or "").strip()
+
+        to_email = os.getenv("SUPPORT_EMAIL", os.getenv("MAIL_FROM", "suporte@fichasdemalharia.com.br"))
+        subject = f"[Contato site] {assunto}"
+        text = f"De: {email}\nAssunto: {assunto}\n\nMensagem:\n{mensagem}\n"
+
+        msg_ok = send_email(to_email, subject, text, None)
+
+    return render_template("contato.html", msg_ok=msg_ok)
+
+# -----------------------------
+# Saúde
+# -----------------------------
 @app.get("/health")
 def health():
     return {"status": "ok"}
