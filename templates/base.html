@@ -9,11 +9,37 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="container">
+    <div class="container" style="display:flex; align-items:center; justify-content:space-between; gap:16px;">
       <a class="brand" href="/">fichasdemalharia.com.br</a>
-      <nav class="nav">
+
+      <nav class="nav" style="display:flex; align-items:center; gap:14px;">
         <a href="/">Home</a>
         <a href="/busca">Buscar fichas</a>
+
+        <a href="/cart" style="display:flex; align-items:center; gap:8px; white-space:nowrap;">
+          🛒 Carrinho
+
+          {% set cc = cart_count|default(0) %}
+          {% if cc and cc > 0 %}
+            <span
+              style="
+                display:inline-flex;
+                align-items:center;
+                justify-content:center;
+                min-width:22px;
+                height:22px;
+                padding:0 7px;
+                border-radius:999px;
+                font-size:12px;
+                font-weight:800;
+              "
+              aria-label="Itens no carrinho"
+              title="Itens no carrinho"
+            >
+              {{ cc }}
+            </span>
+          {% endif %}
+        </a>
       </nav>
     </div>
   </header>
