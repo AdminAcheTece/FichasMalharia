@@ -2,6 +2,63 @@
 {% block title %}Busca | Fichas de Malharia{% endblock %}
 {% block content %}
 
+<!-- ✅ pequenos overrides locais (cores) -->
+<style>
+  /* Link "Ver detalhes" seguindo a paleta */
+  .link{
+    color: var(--olive) !important;
+    font-weight:700;
+    text-decoration:none;
+    white-space:nowrap;
+  }
+  .link:hover{
+    color: var(--olive-600) !important;
+    text-decoration:underline;
+    text-underline-offset:3px;
+  }
+
+  /* Cards de resultado com leitura melhor */
+  .card.ficha{
+    border:1px solid #eee;
+    background:#fff;
+  }
+
+  /* Meta em “chips” suaves (sem mudar layout geral) */
+  .meta{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px 12px;
+    margin-top:6px;
+    color:#333;
+    font-size:14px;
+  }
+  .meta span b{ color:#111; }
+
+  /* Preço com destaque discreto */
+  .price{
+    font-weight:900;
+    color:#111;
+  }
+
+  /* Linha de ações mais alinhada */
+  .actions{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-top:12px;
+    padding-top:12px;
+    border-top:1px solid #f0f0f0;
+  }
+  .actions-right{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+</style>
+
 <div class="page-head">
   <div>
     <h1>Busca de Fichas</h1>
