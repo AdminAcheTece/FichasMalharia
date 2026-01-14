@@ -75,9 +75,17 @@
 {% else %}
 
   <div class="card" style="margin-top:14px;">
-    <h2>Itens no carrinho</h2>
-    <p class="muted" style="margin-top:6px;">Você pode remover itens antes de finalizar.</p>
-
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+      <div>
+        <h2>Itens no carrinho</h2>
+        <p class="muted" style="margin-top:6px;">Você pode remover itens antes de finalizar.</p>
+      </div>
+  
+      <a href="{{ url_for('busca') }}" class="btn ghost" style="white-space:nowrap;">
+        Continuar comprando
+      </a>
+    </div>
+  
     <div class="cart-list">
       {% for f in fichas %}
         <div class="cart-item">
@@ -85,10 +93,10 @@
             <div class="title">{{ f.titulo }}</div>
             <div class="muted">Preço unitário</div>
           </div>
-
+  
           <div class="right">
             <div class="price">R$ {{ "%.2f"|format(f.preco) }}</div>
-
+  
             <form method="post" action="/cart/remove/{{ f.id }}" style="margin:0;">
               <button class="btn ghost" type="submit">Remover</button>
             </form>
