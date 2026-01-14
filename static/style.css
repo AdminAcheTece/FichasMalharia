@@ -424,14 +424,16 @@ input:focus, select:focus, textarea:focus{
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;              /* espaço entre ícone e texto */
+  gap: 12px;              /* espaço entre ícone e texto */
   text-decoration: none;
 }
 
-.brand-icon {
-  height: 1em;            /* acompanha o tamanho da fonte */
-  width: auto;
-  display: block;
+.brand-icon{
+  height: 2em;
+  width: 2em;
+  max-height: 34px;
+  max-width: 34px;
+  object-fit: contain;
 }
 
 .brand-text {
