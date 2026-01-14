@@ -420,3 +420,20 @@ input:focus, select:focus, textarea:focus{
   .nav{ gap: 12px; }
   .nav a.nav-cart{ padding: 8px 10px; }
 }
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;              /* espaço entre ícone e texto */
+  text-decoration: none;
+}
+
+.brand-icon {
+  height: 1em;            /* acompanha o tamanho da fonte */
+  width: auto;
+  display: block;
+}
+
+.brand-text {
+  line-height: 1;
+}
