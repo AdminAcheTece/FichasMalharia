@@ -192,8 +192,10 @@
       </a>
 
       <nav class="nav nav-right">
-        <a href="/cart" class="nav-cart">
-          🛒 Carrinho
+        <a href="/cart" class="nav-cart" aria-label="Carrinho">
+          <span class="cart-ico" aria-hidden="true">🛒</span>
+          <span class="cart-text">Carrinho</span>
+      
           {% set cc = cart_count|default(0) %}
           {% if cc and cc > 0 %}
             <span class="badge" aria-label="Itens no carrinho" title="Itens no carrinho">{{ cc }}</span>
