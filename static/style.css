@@ -439,3 +439,20 @@ input:focus, select:focus, textarea:focus{
 .brand-text {
   line-height: 1;
 }
+
+/* Mobile: mostra só o ícone do carrinho */
+@media (max-width: 560px){
+  .nav-cart .cart-text{
+    display: none;
+  }
+
+  .nav-cart{
+    gap: 0;
+    padding: 10px 12px; /* ajusta o “botão” */
+  }
+
+  .nav-cart .cart-ico{
+    font-size: 20px;
+    line-height: 1;
+  }
+}
