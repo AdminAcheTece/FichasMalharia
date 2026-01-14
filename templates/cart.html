@@ -61,6 +61,32 @@
     line-height: 1.1;
     border-radius: 9999px;
   }
+
+  /* ✅ Destaque maior nos itens do carrinho */
+  .cart-item{
+    border: 1px solid rgba(0,0,0,.06);
+    border-left: 4px solid var(--line-olive);
+    background: #fff;
+    border-radius: 16px;
+    padding: 16px 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.05);
+    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  }
+
+  .cart-item + .cart-item{
+    margin-top: 12px;
+  }
+
+  .cart-item:hover{
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(0,0,0,.08);
+    border-color: var(--line-olive);
+  }
+
+  /* (opcional) deixa o título ainda mais “produto” */
+  .cart-item .title{
+    font-weight: 800;
+  }
 </style>
 
 <div class="page-head">
