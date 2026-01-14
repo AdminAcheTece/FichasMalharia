@@ -141,14 +141,6 @@
       text-underline-offset:3px;
     }
 
-    /* “FM” mark discreto com oliva */
-    .footer-mark{
-      background: var(--olive-50) !important;
-      border:1px solid var(--line-olive) !important;
-      color: var(--olive-dark) !important;
-      font-weight:900;
-    }
-
     /* Footer bottom */
     .footer-bottom{
       border-top:1px solid #f0f0f0;
@@ -224,12 +216,15 @@
   <footer class="site-footer">
     <div class="container footer-grid">
       <div class="footer-brand">
-        <div class="footer-mark">FM</div>
+        <div class="brand-mark">
+          <img src="{{ url_for('static', filename='favicon.png') }}"
+               alt="Fichas de Malharia"
+               class="brand-mark-img">
+        </div>
         <div>
           <div class="footer-title">Fichas de Malharia</div>
           <div class="footer-text">
-            Catálogo de fichas técnicas para malharias e confecções.<br>
-            Conexão segura • Checkout Mercado Pago • Entrega por link
+            Catálogo de fichas técnicas para malharias e confecções.<br>            
           </div>
         </div>
       </div>
