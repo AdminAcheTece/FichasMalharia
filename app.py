@@ -424,7 +424,7 @@ def _bootstrap():
 @app.context_processor
 def inject_globals():
     support_email = os.getenv("SUPPORT_EMAIL", "suporte@fichasdemalharia.com.br")
-    support_whatsapp = os.getenv("SUPPORT_WHATSAPP", "")  # ex: +55 (47) 99999-9999
+    support_whatsapp = os.getenv("SUPPORT_WHATSAPP", "")
     site_last_update = os.getenv("SITE_LAST_UPDATE", "2026-01-13")
 
     try:
@@ -446,7 +446,6 @@ def inject_globals():
 def get_or_create_pedido_access_token(pedido_id: int) -> PedidoAccessToken:
     now = datetime.utcnow()
 
-    # Se já existe token válido, reutiliza
     existing = (
         PedidoAccessToken.query
         .filter_by(pedido_id=pedido_id)
@@ -474,7 +473,6 @@ def get_or_create_download_token(pedido_id: int, ficha_id: int) -> DownloadToken
     dias = int(os.getenv("DOWNLOAD_TOKEN_DAYS", "30"))
     expira = now + timedelta(days=dias)
 
-    # Reutiliza o último token válido (idempotente)
     existing = (
         DownloadToken.query
         .filter_by(pedido_id=pedido_id, ficha_id=ficha_id)
@@ -500,11 +498,6 @@ def get_or_create_download_token(pedido_id: int, ficha_id: int) -> DownloadToken
 # -----------------------------
 # Rotas principais
 # -----------------------------
-@app.get("/")
-def home():
-    categorias, tipos = get_distinct_filters()
-    return render_template("home.html", categorias=categorias, tipos=tipos)
-
 @app.get("/busca")
 def busca():
     tipo = (request.args.get("tipo") or "").strip()
@@ -545,6 +538,11 @@ def busca():
         cart_ids=cart_ids,
         results_count=len(resultados),
     )
+
+# ✅ HOME removida: agora "/" usa a página BUSCA (mesmo código / mesma renderização)
+@app.get("/")
+def home():
+    return busca()
 
 # -----------------------------
 # Detalhes da ficha (produto)
@@ -687,7 +685,7 @@ def mp_webhook():
         return ("ok", 200)
 
     status = pay.get("status")
-    external_reference = pay.get("external_reference")  # pedido.id
+    external_reference = pay.get("external_reference")
 
     if not external_reference:
         return ("ok", 200)
@@ -722,11 +720,9 @@ def gerar_links_e_enviar_email(pedido_id: int):
 
     base_url = get_base_url()
 
-    # ✅ Token único "Minha compra"
     ptoken = get_or_create_pedido_access_token(pedido.id)
     minha_compra_url = f"{base_url}/minha-compra/{ptoken.token}"
 
-    # ✅ Links por item (mantemos, mas o principal vira "Minha compra")
     links = []
     for it in itens:
         ficha = Ficha.query.get(it.ficha_id)
@@ -797,7 +793,6 @@ def minha_compra(token):
 
     for it in itens:
         ficha = Ficha.query.get(it.ficha_id)
-        # ainda mostra o item mesmo que ficha tenha sido desativada depois
         titulo = it.titulo_snapshot
         preco_cent = it.preco_centavos_snapshot
         total_cent += preco_cent
