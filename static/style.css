@@ -429,8 +429,8 @@ input:focus, select:focus, textarea:focus{
 }
 
 .brand-icon{
-  height: 3em;
-  width: 3em;
+  height: 4em;
+  width: 4em;
   max-height: 34px;
   max-width: 34px;
   object-fit: contain;
