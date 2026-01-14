@@ -182,7 +182,14 @@
 <body>
   <header class="topbar">
     <div class="container topbar-inner">
-      <a class="brand" href="/">fichasdemalharia.com.br</a>
+      <a class="brand" href="{{ url_for('home') }}">
+        <img
+          src="{{ url_for('static', filename='favicon.png') }}"
+          alt="Fichas de Malharia"
+          class="brand-icon"
+        >
+        <span class="brand-text">fichasdemalharia.com.br</span>
+      </a>
 
       <nav class="nav nav-right">
         <a href="/">Home</a>
