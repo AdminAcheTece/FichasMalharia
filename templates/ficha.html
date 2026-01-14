@@ -79,11 +79,6 @@
   .product .card h2{ margin-top:0; }
 </style>
 
-<!-- ✅ Link rápido para voltar ao carrinho -->
-<a href="{{ url_for('cart_view') }}" class="muted" style="display:inline-block; margin-bottom:10px;">
-  ← Voltar ao carrinho
-</a>
-
 <div class="card product">
   <div class="product-head">
     <div>
@@ -96,18 +91,8 @@
     <div class="product-buy">
       <div class="product-price">R$ {{ "%.2f"|format(ficha.preco) }}</div>
 
-      <!-- ✅ Ações principais + botão de voltar ao carrinho sempre visível -->
-      <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
-        {% if in_cart %}
-          <a class="btn" href="{{ url_for('cart_view') }}">Ir para o carrinho</a>
-        {% else %}
-          <form method="post" action="/cart/add/{{ ficha.id }}" style="margin:0;">
-            <button class="btn" type="submit">Adicionar ao carrinho</button>
-          </form>
-        {% endif %}
-
-        <a class="btn ghost" href="{{ url_for('cart_view') }}">🛒 Voltar ao carrinho</a>
-      </div>
+      <!-- ✅ ÚNICO botão mantido -->
+      <a class="btn ghost" href="{{ url_for('cart_view') }}">🛒 Voltar ao carrinho</a>
     </div>
   </div>
 
